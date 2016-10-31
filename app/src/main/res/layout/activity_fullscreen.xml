@@ -1,0 +1,172 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context="com.example.phili.spielwiese.FullscreenActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_centerHorizontal="true"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/heading_layout"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:text="hdg\n270"
+                    android:textColor="#FFFFFF"
+                    android:layout_width="132dp"
+                    android:layout_height="132dp"
+                    android:id="@+id/heading"
+                    style="@style/ValueButton"
+                    android:background="@drawable/value_button"
+                    android:layout_centerHorizontal="true"/>
+
+                <Button
+                    android:text="-"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:id="@+id/minus"
+                    style="@style/ValueChangeButton"
+                    android:background="@drawable/value_change_button"
+                    android:layout_below="@id/heading"
+                    android:layout_alignLeft="@id/heading"/>
+
+                <Button
+                    android:text="+"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:id="@+id/plus"
+                    style="@style/ValueChangeButton"
+                    android:background="@drawable/value_change_button"
+                    android:layout_below="@id/heading"
+                    android:layout_alignRight="@id/heading" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/alt_layout"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:text="alt\n35000"
+                    android:textColor="#FFFFFF"
+                    android:layout_width="132dp"
+                    android:layout_height="132dp"
+                    android:id="@+id/alt"
+                    style="@style/ValueButton"
+                    android:background="@drawable/value_button"
+                    android:layout_centerHorizontal="true"/>
+
+                <Button
+                    android:text="-"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    style="@style/ValueChangeButton"
+                    android:background="@drawable/value_change_button"
+                    android:layout_below="@id/alt"
+                    android:layout_alignLeft="@id/alt"/>
+
+                <Button
+                    android:text="+"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    style="@style/ValueChangeButton"
+                    android:background="@drawable/value_change_button"
+                    android:layout_below="@id/alt"
+                    android:layout_alignRight="@id/alt"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/heading_layout"
+                android:layout_marginTop="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:text="ias\n145"
+                    android:textColor="#FFFFFF"
+                    android:layout_width="132dp"
+                    android:layout_height="132dp"
+                    android:id="@+id/ias"
+                    style="@style/ValueButton"
+                    android:background="@drawable/value_button"
+                    android:layout_centerHorizontal="true"/>
+
+                <Button
+                    android:text="-"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    style="@style/ValueChangeButton"
+                    android:background="@drawable/value_change_button"
+                    android:layout_below="@id/ias"
+                    android:layout_alignLeft="@id/ias"/>
+
+                <Button
+                    android:text="+"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    style="@style/ValueChangeButton"
+                    android:background="@drawable/value_change_button"
+                    android:layout_below="@id/ias"
+                    android:layout_alignRight="@id/ias"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/alt_layout"
+                android:layout_marginTop="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:text="vs\n1800"
+                    android:textColor="#FFFFFF"
+                    android:layout_width="132dp"
+                    android:layout_height="132dp"
+                    android:id="@+id/vs"
+                    style="@style/ValueButton"
+                    android:background="@drawable/value_button"
+                    android:layout_centerHorizontal="true"/>
+
+                <Button
+                    android:text="-"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    style="@style/ValueChangeButton"
+                    android:background="@drawable/value_change_button"
+                    android:layout_below="@id/vs"
+                    android:layout_alignLeft="@id/vs"/>
+
+                <Button
+                    android:text="+"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    style="@style/ValueChangeButton"
+                    android:background="@drawable/value_change_button"
+                    android:layout_below="@id/vs"
+                    android:layout_alignRight="@id/vs"/>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>
