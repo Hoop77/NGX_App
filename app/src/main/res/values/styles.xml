@@ -14,13 +14,19 @@
     </style>
 
     <style name="ValueChangeButton">
-        <item name="android:fontFamily">Roboto-Thin</item>
+        <item name="android:fontFamily">Roboto</item>
         <item name="android:textSize">32sp</item>
         <item name="android:textColor">#FFFFFF</item>
     </style>
 
     <style name="ValueButton">
-        <item name="android:fontFamily">Roboto-Thin</item>
+        <item name="android:fontFamily">Roboto</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="ValueText">
+        <item name="android:fontFamily">Roboto</item>
         <item name="android:textSize">24sp</item>
         <item name="android:textColor">#FFFFFF</item>
     </style>
