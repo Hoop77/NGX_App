@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -15,29 +15,24 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="64dp">
 
-            <Button
+            <TextView
+                android:text="HDG"
+                android:id="@+id/heading_text"
+                style="@style/ValueLabel"/>
+
+            <TextView
                 android:text="270"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:id="@+id/heading_value"
-                style="@style/ValueButton"
-                android:background="@drawable/value_button"
-                android:layout_centerInParent="true"/>
-
-            <TextView
-                android:text="HDG"
-                android:textColor="#FFFFFF"
-                android:layout_width="64dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/heading_text"
                 style="@style/ValueText"
-                android:layout_toLeftOf="@id/heading_value"
+                android:background="@drawable/value_text"
                 android:layout_centerVertical="true"
-                android:textAlignment="center"
-                android:layout_marginRight="16dp"/>
+                android:layout_toRightOf="@id/heading_text"
+                android:layout_marginLeft="16dp"/>
 
             <Button
                 android:text="-"
@@ -73,31 +68,26 @@
             android:id="@+id/alt_layout"
             android:layout_below="@id/heading_layout"
             android:layout_centerHorizontal="true"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="64dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp">
 
-            <Button
+            <TextView
+                android:text="ALT"
+                android:id="@+id/alt_text"
+                style="@style/ValueLabel"/>
+
+            <TextView
                 android:text="35000"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:id="@+id/alt_value"
-                style="@style/ValueButton"
-                android:background="@drawable/value_button"
-                android:layout_centerInParent="true"/>
-
-            <TextView
-                android:text="ALT"
-                android:textColor="#FFFFFF"
-                android:layout_width="64dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/alt_text"
                 style="@style/ValueText"
-                android:layout_toLeftOf="@id/alt_value"
+                android:background="@drawable/value_text"
                 android:layout_centerVertical="true"
-                android:textAlignment="center"
-                android:layout_marginRight="16dp"/>
+                android:layout_toRightOf="@id/alt_text"
+                android:layout_marginLeft="16dp"/>
 
             <Button
                 android:text="-"
@@ -133,31 +123,26 @@
             android:id="@+id/vs_layout"
             android:layout_below="@id/alt_divisor"
             android:layout_centerHorizontal="true"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="64dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp">
 
-            <Button
+            <TextView
+                android:text="VS"
+                android:id="@+id/vs_text"
+                style="@style/ValueLabel"/>
+
+            <TextView
                 android:text="1800"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:id="@+id/vs_value"
-                style="@style/ValueButton"
-                android:background="@drawable/value_button"
-                android:layout_centerInParent="true"/>
-
-            <TextView
-                android:text="VS"
-                android:textColor="#FFFFFF"
-                android:layout_width="64dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/vs_text"
                 style="@style/ValueText"
-                android:layout_toLeftOf="@id/vs_value"
+                android:background="@drawable/value_text"
                 android:layout_centerVertical="true"
-                android:textAlignment="center"
-                android:layout_marginRight="16dp"/>
+                android:layout_toRightOf="@id/vs_text"
+                android:layout_marginLeft="16dp"/>
 
             <Button
                 android:text="-"
@@ -193,31 +178,26 @@
             android:id="@+id/ias_layout"
             android:layout_below="@id/vs_divisor"
             android:layout_centerHorizontal="true"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="64dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp">
 
-            <Button
+            <TextView
+                android:text="IAS"
+                android:id="@+id/ias_text"
+                style="@style/ValueLabel"/>
+
+            <TextView
                 android:text="145"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:id="@+id/ias_value"
-                style="@style/ValueButton"
-                android:background="@drawable/value_button"
-                android:layout_centerInParent="true"/>
-
-            <TextView
-                android:text="IAS"
-                android:textColor="#FFFFFF"
-                android:layout_width="64dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/ias_text"
                 style="@style/ValueText"
-                android:layout_toLeftOf="@id/ias_value"
+                android:background="@drawable/value_text"
                 android:layout_centerVertical="true"
-                android:textAlignment="center"
-                android:layout_marginRight="16dp"/>
+                android:layout_toRightOf="@id/ias_text"
+                android:layout_marginLeft="16dp"/>
 
             <Button
                 android:text="-"
@@ -242,6 +222,525 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:id="@+id/hnav_layout"
+            android:layout_below="@id/ias_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:id="@+id/hnav_text"
+                android:text="Horizontal Navigation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                style="@style/SectionText"/>
+
+            <LinearLayout
+                android:id="@+id/hnav_row1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/hnav_text"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true">
+
+                <ToggleButton
+                    android:textOn="LNAV"
+                    android:textOff="LNAV"
+                    style="@style/ToggleBtn"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginRight="8dp"/>
+
+                <ToggleButton
+                    android:textOn="HDG SEL"
+                    android:textOff="HDG SEL"
+                    style="@style/ToggleBtn"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginLeft="8dp"/>
+
+            </LinearLayout>
+
+            <ToggleButton
+                android:layout_below="@id/hnav_row1"
+                android:textOn="VOR LOC"
+                android:textOff="VOR LOC"
+                style="@style/ToggleBtn"
+                android:background="@drawable/toggle_btn_bg"
+                android:layout_marginTop="12dp"
+                android:layout_centerHorizontal="true"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/vnav_layout"
+            android:layout_below="@id/hnav_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/vnav_text"
+                android:text="Vertical Navigation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                style="@style/SectionText"/>
+
+            <LinearLayout
+                android:id="@+id/vnav_row1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/vnav_text"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true">
+
+                <ToggleButton
+                    android:textOn="VNAV"
+                    android:textOff="VNAV"
+                    style="@style/ToggleBtn"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginRight="8dp"/>
+
+                <ToggleButton
+                    android:textOn="ALT HLD"
+                    android:textOff="ALT HLD"
+                    style="@style/ToggleBtn"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginLeft="8dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/vnav_row2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/vnav_row1"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true">
+
+                <Button
+                    android:text="ALT INTV"
+                    style="@style/PushBtn"
+                    android:background="@drawable/push_btn"
+                    android:layout_marginRight="8dp"/>
+
+                <ToggleButton
+                    android:textOn="VS"
+                    android:textOff="VS"
+                    style="@style/ToggleBtn"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginLeft="8dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/vnav_row3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/vnav_row2"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true">
+
+                <Button
+                    android:text="SPD INTV"
+                    style="@style/PushBtn"
+                    android:background="@drawable/push_btn"
+                    android:layout_marginRight="8dp"/>
+
+                <ToggleButton
+                    android:textOn="LVL CHG"
+                    android:textOff="LVL CHG"
+                    style="@style/ToggleBtn"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginLeft="8dp"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/throttle_layout"
+            android:layout_below="@id/vnav_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/throttle_text"
+                android:text="Auto Throttle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                style="@style/SectionText"/>
+
+            <ToggleButton
+                android:id="@+id/throttle_row1"
+                android:layout_below="@id/throttle_text"
+                android:textOn="AT/ARM"
+                android:textOff="AT/ARM"
+                style="@style/ToggleBtn"
+                android:background="@drawable/toggle_btn_bg"
+                android:layout_marginTop="16dp"
+                android:layout_centerHorizontal="true"/>
+
+            <LinearLayout
+                android:layout_below="@id/throttle_row1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:layout_centerHorizontal="true">
+
+                <ToggleButton
+                    android:textOn="N1"
+                    android:textOff="N1"
+                    style="@style/ToggleBtn"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginRight="8dp"/>
+
+                <ToggleButton
+                    android:textOn="SPEED"
+                    android:textOff="SPEED"
+                    style="@style/ToggleBtn"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginLeft="8dp"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/ils_layout"
+            android:layout_below="@id/throttle_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/ils_text"
+                android:text="ILS"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                style="@style/SectionText"/>
+
+            <ToggleButton
+                android:layout_below="@id/ils_text"
+                android:textOn="APP"
+                android:textOff="APP"
+                style="@style/ToggleBtn"
+                android:background="@drawable/toggle_btn_bg"
+                android:layout_marginTop="16dp"
+                android:layout_centerHorizontal="true"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/apengage_layout"
+            android:layout_below="@id/ils_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/apengage_text"
+                android:text="Autopilot Engage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                style="@style/SectionText"/>
+
+            <LinearLayout
+                android:id="@+id/apengage_row1"
+                android:layout_below="@id/apengage_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_centerHorizontal="true">
+
+                <ToggleButton
+                    android:textOn="CMD A"
+                    android:textOff="CMD A"
+                    style="@style/ToggleBtn"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginRight="8dp"/>
+
+                <ToggleButton
+                    android:textOn="CMD B"
+                    android:textOff="CMD B"
+                    style="@style/ToggleBtn"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginLeft="8dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/apengage_row2"
+                android:layout_below="@id/apengage_row1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                android:layout_centerHorizontal="true">
+
+                <ToggleButton
+                    android:textOn="CWS A"
+                    android:textOff="CWS A"
+                    style="@style/ToggleBtn"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginRight="8dp"/>
+
+                <ToggleButton
+                    android:textOn="CWS B"
+                    android:textOff="CWS B"
+                    style="@style/ToggleBtn"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginLeft="8dp"/>
+
+            </LinearLayout>
+
+            <Button
+                android:layout_below="@id/apengage_row2"
+                android:text="DISENGAGE"
+                style="@style/PushBtn.Big"
+                android:background="@drawable/push_btn"
+                android:layout_marginTop="12dp"
+                android:layout_centerHorizontal="true"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/fd_layout"
+            android:layout_below="@id/apengage_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/fd_text"
+                android:text="Flight Directors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                style="@style/SectionText"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fd_text"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true">
+
+                <ToggleButton
+                    android:textOn="FD L"
+                    android:textOff="FD L"
+                    style="@style/ToggleBtn"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginRight="8dp"/>
+
+                <ToggleButton
+                    android:textOn="FD R"
+                    android:textOff="FD R"
+                    style="@style/ToggleBtn"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginLeft="8dp"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/bank_layout"
+            android:layout_below="@id/fd_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/bank_text"
+                android:text="Bank"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                style="@style/SectionText"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/bank_text"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true">
+
+                <ToggleButton
+                    android:textOn="10"
+                    android:textOff="10"
+                    style="@style/ToggleBtn.Small"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginRight="4dp"/>
+
+                <ToggleButton
+                    android:textOn="15"
+                    android:textOff="15"
+                    style="@style/ToggleBtn.Small"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"/>
+
+                <ToggleButton
+                    android:textOn="20"
+                    android:textOff="20"
+                    style="@style/ToggleBtn.Small"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"/>
+
+                <ToggleButton
+                    android:textOn="25"
+                    android:textOff="25"
+                    style="@style/ToggleBtn.Small"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"/>
+
+                <ToggleButton
+                    android:textOn="30"
+                    android:textOff="30"
+                    style="@style/ToggleBtn.Small"
+                    android:background="@drawable/toggle_btn_bg"
+                    android:layout_marginLeft="4dp"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/course1_layout"
+            android:layout_below="@id/bank_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="64dp">
+
+            <TextView
+                android:text="CRS 1"
+                android:id="@+id/course1_text"
+                style="@style/ValueLabel"/>
+
+            <TextView
+                android:text="000"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:id="@+id/course1_value"
+                style="@style/ValueText"
+                android:background="@drawable/value_text"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/course1_text"
+                android:layout_marginLeft="16dp"/>
+
+            <Button
+                android:text="-"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/course1_minus"
+                style="@style/ValueChangeButton"
+                android:background="@drawable/value_change_button"
+                android:layout_toRightOf="@id/course1_value"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"/>
+
+            <Button
+                android:text="+"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                style="@style/ValueChangeButton"
+                android:background="@drawable/value_change_button"
+                android:layout_toRightOf="@id/course1_minus"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="8dp"/>
+
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/course1_divisor"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/divisor"
+            android:layout_below="@id/course1_layout"/>
+
+        <RelativeLayout
+            android:id="@+id/course2_layout"
+            android:layout_below="@id/course1_divisor"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="64dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:text="CRS 2"
+                android:id="@+id/course2_text"
+                style="@style/ValueLabel"/>
+
+            <TextView
+                android:text="180"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:id="@+id/course2_value"
+                style="@style/ValueText"
+                android:background="@drawable/value_text"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/course2_text"
+                android:layout_marginLeft="16dp"/>
+
+            <Button
+                android:text="-"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/course2_minus"
+                style="@style/ValueChangeButton"
+                android:background="@drawable/value_change_button"
+                android:layout_toRightOf="@id/course2_value"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"/>
+
+            <Button
+                android:text="+"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                style="@style/ValueChangeButton"
+                android:background="@drawable/value_change_button"
+                android:layout_toRightOf="@id/course2_minus"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="8dp"/>
+
+        </RelativeLayout>
+
+        <Space
+            android:layout_below="@id/course2_layout"
+            android:layout_width="match_parent"
+            android:layout_height="300dp" />
+
     </RelativeLayout>
 
-</FrameLayout>
+</ScrollView>

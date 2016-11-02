@@ -14,21 +14,57 @@
     </style>
 
     <style name="ValueChangeButton">
-        <item name="android:fontFamily">Roboto</item>
+        <item name="android:fontFamily">sans-serif</item>
         <item name="android:textSize">32sp</item>
         <item name="android:textColor">#FFFFFF</item>
     </style>
 
-    <style name="ValueButton">
-        <item name="android:fontFamily">Roboto</item>
+    <style name="ValueText">
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">sans-serif</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">#FFFFFF</item>
     </style>
 
-    <style name="ValueText">
-        <item name="android:fontFamily">Roboto</item>
+    <style name="ValueLabel">
+        <item name="android:fontFamily">sans-serif-thin</item>
         <item name="android:textSize">24sp</item>
         <item name="android:textColor">#FFFFFF</item>
+        <item name="android:layout_width">72dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="SectionText">
+        <item name="android:fontFamily">sans-serif-thin</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#A0A0A0</item>
+    </style>
+
+    <style name="ToggleBtn">
+        <item name="android:fontFamily">sans-serif-thin</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:layout_width">128dp</item>
+        <item name="android:layout_height">42dp</item>
+    </style>
+
+    <style name="ToggleBtn.Small" parent="ToggleBtn">
+        <item name="android:layout_width">64dp</item>
+    </style>
+
+    <style name="PushBtn">
+        <item name="android:fontFamily">sans-serif-thin</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:layout_width">128dp</item>
+        <item name="android:layout_height">42dp</item>
+    </style>
+
+    <style name="PushBtn.Big" parent="PushBtn">
+        <item name="android:layout_width">272dp</item>
     </style>
 
 </resources>
