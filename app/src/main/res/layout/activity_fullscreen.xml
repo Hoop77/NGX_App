@@ -248,6 +248,7 @@
                 android:layout_centerVertical="true">
 
                 <ToggleButton
+                    android:id="@+id/lnav_switch"
                     android:textOn="LNAV"
                     android:textOff="LNAV"
                     style="@style/ToggleBtn"
@@ -255,6 +256,7 @@
                     android:layout_marginRight="8dp"/>
 
                 <ToggleButton
+                    android:id="@+id/hdg_sel_switch"
                     android:textOn="HDG SEL"
                     android:textOff="HDG SEL"
                     style="@style/ToggleBtn"
@@ -264,6 +266,7 @@
             </LinearLayout>
 
             <ToggleButton
+                android:id="@+id/vor_loc_switch"
                 android:layout_below="@id/hnav_row1"
                 android:textOn="VOR LOC"
                 android:textOff="VOR LOC"
@@ -301,6 +304,7 @@
                 android:layout_centerVertical="true">
 
                 <ToggleButton
+                    android:id="@+id/vnav_switch"
                     android:textOn="VNAV"
                     android:textOff="VNAV"
                     style="@style/ToggleBtn"
@@ -308,6 +312,7 @@
                     android:layout_marginRight="8dp"/>
 
                 <ToggleButton
+                    android:id="@+id/alt_hold_switch"
                     android:textOn="ALT HLD"
                     android:textOff="ALT HLD"
                     style="@style/ToggleBtn"
@@ -327,12 +332,14 @@
                 android:layout_centerVertical="true">
 
                 <Button
+                    android:id="@+id/alt_intv_switch"
                     android:text="ALT INTV"
                     style="@style/PushBtn"
                     android:background="@drawable/push_btn"
                     android:layout_marginRight="8dp"/>
 
                 <ToggleButton
+                    android:id="@+id/vs_switch"
                     android:textOn="VS"
                     android:textOff="VS"
                     style="@style/ToggleBtn"
@@ -352,12 +359,14 @@
                 android:layout_centerVertical="true">
 
                 <Button
+                    android:id="@+id/spd_intv_switch"
                     android:text="SPD INTV"
                     style="@style/PushBtn"
                     android:background="@drawable/push_btn"
                     android:layout_marginRight="8dp"/>
 
                 <ToggleButton
+                    android:id="@+id/lvl_chg_switch"
                     android:textOn="LVL CHG"
                     android:textOff="LVL CHG"
                     style="@style/ToggleBtn"
@@ -385,7 +394,7 @@
                 style="@style/SectionText"/>
 
             <ToggleButton
-                android:id="@+id/throttle_row1"
+                android:id="@+id/at_arm_switch"
                 android:layout_below="@id/throttle_text"
                 android:textOn="AT/ARM"
                 android:textOff="AT/ARM"
@@ -395,7 +404,7 @@
                 android:layout_centerHorizontal="true"/>
 
             <LinearLayout
-                android:layout_below="@id/throttle_row1"
+                android:layout_below="@id/at_arm_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -403,6 +412,7 @@
                 android:layout_centerHorizontal="true">
 
                 <ToggleButton
+                    android:id="@+id/n1_switch"
                     android:textOn="N1"
                     android:textOff="N1"
                     style="@style/ToggleBtn"
@@ -410,6 +420,7 @@
                     android:layout_marginRight="8dp"/>
 
                 <ToggleButton
+                    android:id="@+id/speed_switch"
                     android:textOn="SPEED"
                     android:textOff="SPEED"
                     style="@style/ToggleBtn"
@@ -437,6 +448,7 @@
                 style="@style/SectionText"/>
 
             <ToggleButton
+                android:id="@+id/app_switch"
                 android:layout_below="@id/ils_text"
                 android:textOn="APP"
                 android:textOff="APP"
@@ -473,6 +485,7 @@
                 android:layout_centerHorizontal="true">
 
                 <ToggleButton
+                    android:id="@+id/cmd_a_switch"
                     android:textOn="CMD A"
                     android:textOff="CMD A"
                     style="@style/ToggleBtn"
@@ -480,6 +493,7 @@
                     android:layout_marginRight="8dp"/>
 
                 <ToggleButton
+                    android:id="@+id/cmd_b_switch"
                     android:textOn="CMD B"
                     android:textOff="CMD B"
                     style="@style/ToggleBtn"
@@ -498,6 +512,7 @@
                 android:layout_centerHorizontal="true">
 
                 <ToggleButton
+                    android:id="@+id/cws_a_switch"
                     android:textOn="CWS A"
                     android:textOff="CWS A"
                     style="@style/ToggleBtn"
@@ -505,6 +520,7 @@
                     android:layout_marginRight="8dp"/>
 
                 <ToggleButton
+                    android:id="@+id/cws_b_switch"
                     android:textOn="CWS B"
                     android:textOff="CWS B"
                     style="@style/ToggleBtn"
@@ -514,6 +530,7 @@
             </LinearLayout>
 
             <Button
+                android:id="@+id/disengage_bar"
                 android:layout_below="@id/apengage_row2"
                 android:text="DISENGAGE"
                 style="@style/PushBtn.Big"
@@ -549,6 +566,7 @@
                 android:layout_centerVertical="true">
 
                 <ToggleButton
+                    android:id="@+id/fd_switch_l"
                     android:textOn="FD L"
                     android:textOff="FD L"
                     style="@style/ToggleBtn"
@@ -556,6 +574,7 @@
                     android:layout_marginRight="8dp"/>
 
                 <ToggleButton
+                    android:id="@+id/fd_switch_r"
                     android:textOn="FD R"
                     android:textOff="FD R"
                     style="@style/ToggleBtn"
@@ -592,6 +611,7 @@
                 android:layout_centerVertical="true">
 
                 <ToggleButton
+                    android:id="@+id/bank_angle_10"
                     android:textOn="10"
                     android:textOff="10"
                     style="@style/ToggleBtn.Small"
@@ -599,6 +619,7 @@
                     android:layout_marginRight="4dp"/>
 
                 <ToggleButton
+                    android:id="@+id/bank_angle_15"
                     android:textOn="15"
                     android:textOff="15"
                     style="@style/ToggleBtn.Small"
@@ -607,6 +628,7 @@
                     android:layout_marginRight="4dp"/>
 
                 <ToggleButton
+                    android:id="@+id/bank_angle_20"
                     android:textOn="20"
                     android:textOff="20"
                     style="@style/ToggleBtn.Small"
@@ -615,6 +637,7 @@
                     android:layout_marginRight="4dp"/>
 
                 <ToggleButton
+                    android:id="@+id/bank_angle_25"
                     android:textOn="25"
                     android:textOff="25"
                     style="@style/ToggleBtn.Small"
@@ -623,6 +646,7 @@
                     android:layout_marginRight="4dp"/>
 
                 <ToggleButton
+                    android:id="@+id/bank_angle_30"
                     android:textOn="30"
                     android:textOff="30"
                     style="@style/ToggleBtn.Small"
