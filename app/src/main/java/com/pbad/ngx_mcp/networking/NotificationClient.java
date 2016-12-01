@@ -4,11 +4,10 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.pbad.ngx_mcp.ValueSetter;
+import com.pbad.ngx_mcp.networking.Protocol.Packet;
 import com.pbad.ngx_mcp.networking.connectionStateManaging.Connection;
-import com.pbad.ngx_mcp.networking.protocol.packet.Packet;
 import com.pbad.ngx_mcp.networking.protocol.packet.receivePacket.dataPacket.DataPacket;
 import com.pbad.ngx_mcp.networking.protocol.packet.receivePacket.dataPacket.SingleValueDataPacket;
-import com.pbad.ngx_mcp.networking.protocol.PacketFactory;
 
 import java.io.IOException;
 import java.net.InetAddress;
