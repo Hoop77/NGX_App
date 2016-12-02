@@ -1,5 +1,6 @@
 package com.pbad.ngx_mcp;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -16,6 +17,7 @@ import com.example.phili.ngx_mcp.R;
 public class MainFragment extends Fragment
 {
     private View view;
+    private OnViewCreatedListener onViewCreatedListener;
 
     @Override
     public View onCreateView( LayoutInflater inflater,
@@ -24,7 +26,19 @@ public class MainFragment extends Fragment
         super.onCreateView(inflater, container, savedInstanceState);
 
         this.view = inflater.inflate( R.layout.main_page, container, false );
+
+        showDisconnected();
+        onViewCreatedListener.onViewCreated();
+
         return view;
+    }
+
+    @Override
+    public void onAttach( Context context )
+    {
+        super.onAttach( context );
+
+        onViewCreatedListener = (OnViewCreatedListener) context;
     }
 
     public void showConnected()

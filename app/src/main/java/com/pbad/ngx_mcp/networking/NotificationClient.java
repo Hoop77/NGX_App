@@ -1,13 +1,16 @@
 package com.pbad.ngx_mcp.networking;
 
 import android.app.Activity;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.pbad.ngx_mcp.SingleValue;
 import com.pbad.ngx_mcp.ValueSetter;
 import com.pbad.ngx_mcp.networking.Protocol.Packet;
+import com.pbad.ngx_mcp.networking.Protocol.PacketIO;
+import com.pbad.ngx_mcp.networking.Protocol.ProtocolException;
+import com.pbad.ngx_mcp.networking.Protocol.SingleValueDataPacket;
 import com.pbad.ngx_mcp.networking.connectionStateManaging.Connection;
-import com.pbad.ngx_mcp.networking.protocol.packet.receivePacket.dataPacket.DataPacket;
-import com.pbad.ngx_mcp.networking.protocol.packet.receivePacket.dataPacket.SingleValueDataPacket;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -24,13 +27,12 @@ public class NotificationClient implements Runnable
     private int port;
     private Connection connection;
 
-    private boolean running = false;
+    private volatile boolean running = false;
     private Thread thread;
     private Socket client;
-    private byte[] receivedData;
     private ValueSetter valueSetter;
 
-    private static final int RESPONSE_OK = 1;
+    private static final byte RESPONSE_OK = 1;
 
     public NotificationClient( InetAddress serverAddress, int port, Connection connection, Activity activity )
     {
@@ -39,7 +41,6 @@ public class NotificationClient implements Runnable
         this.connection = connection;
 
         client = new Socket();
-        receivedData = new byte[ Packet.MAX_SIZE ];
         valueSetter = new ValueSetter( activity );
     }
 
@@ -68,7 +69,7 @@ public class NotificationClient implements Runnable
             return;
 
         running = false;
-        close();
+        closeSocket();
 
         try
         {
@@ -86,49 +87,66 @@ public class NotificationClient implements Runnable
         running = true;
         while( running )
         {
-            if( tryConnect() && receiveData() && respond() )
+            if( connection.getState() == Connection.State.DISCONNECTED )
             {
-                interpretData();
+                tryConnect();
+                continue;
+            }
+
+            Packet packet = receive();
+            if( packet == null )
+                continue;
+
+            if( !respond() )
+                continue;
+
+            interpret( packet );
+        }
+
+        closeSocket();
+    }
+
+    private void tryConnect()
+    {
+        try
+        {
+            closeSocket();
+            newSocket();
+            // We need the next check for proper multithreading:
+            // If "stop()" gets called (from a different thread), we set running to false and closeSocket the socket.
+            // But if this closeSocket operation is called before "newSocket()" gets called, we would still have
+            // a valid socket to connect. If running is false, we prevent using this 'valid' socket from connecting.
+            if( running )
+            {
+                client.connect( new InetSocketAddress( serverAddress, port ), 5000 );
+                connection.setState( Connection.State.CONNECTED );
             }
         }
-
-        close();
+        catch( IOException e )
+        {
+            connection.setState( Connection.State.DISCONNECTED );
+        }
     }
 
-    private boolean tryConnect()
+    @Nullable
+    private Packet receive()
     {
-        if( connection.getState() == Connection.State.CONNECTED )
-            return true;
-
         try
         {
-            close();
-            client = new Socket();
-            client.connect( new InetSocketAddress( serverAddress, port ) );
-            connection.setState( Connection.State.CONNECTED );
-            return true;
+            Packet packet = PacketIO.read( client.getInputStream() );
+            return packet;
         }
         catch( IOException e )
         {
             connection.setState( Connection.State.DISCONNECTED );
         }
-
-        return false;
-    }
-
-    private boolean receiveData()
-    {
-        try
+        catch( ProtocolException e )
         {
-            client.getInputStream().read( receivedData );
-            return true;
-        }
-        catch( IOException e )
-        {
-            connection.setState( Connection.State.DISCONNECTED );
+            Log.d( "NotificationClient", "Invalid packet received!" );
+            // TODO: How should we handle invalid packets?
         }
 
-        return false;
+        return null;
     }
 
     private boolean respond()
@@ -146,25 +164,26 @@ public class NotificationClient implements Runnable
         return false;
     }
 
-    private void interpretData()
+    private void interpret( Packet packet )
     {
-        try
+        if( packet instanceof SingleValueDataPacket )
         {
-            DataPacket packet = PacketFactory.createPacketFromReceivedData( receivedData );
-            if( packet instanceof SingleValueDataPacket )
-            {
-                // get the single value from the packet and push it to the UI
-                SingleValueDataPacket singleValueDataPacket = (SingleValueDataPacket) packet;
-                valueSetter.setValue( singleValueDataPacket.getSingleValue() );
-            }
-        }
-        catch( InsufficientBufferSizeException e )
-        {
-            Log.d( "NotificationClient", "Invalid data received!" );
+            // get the single value from the packet and push it to the UI
+            SingleValueDataPacket singleValueDataPacket = (SingleValueDataPacket) packet;
+            SingleValue singleValue = new SingleValue(
+                    singleValueDataPacket.getValueId(), singleValueDataPacket.getValue() );
+            valueSetter.setValue( singleValue );
         }
     }
 
-    private void close()
+    // newSocket() and closeSocket() need to be synchronized because another thread may call stop()
+    // which closes the socket which should be done on an completely initialized socket.
+    private synchronized void newSocket()
+    {
+        client = new Socket();
+    }
+
+    private synchronized void closeSocket()
     {
         try
         {

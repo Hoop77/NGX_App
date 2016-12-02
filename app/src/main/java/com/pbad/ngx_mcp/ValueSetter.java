@@ -26,7 +26,7 @@ public class ValueSetter
             @Override
             public void run()
             {
-                int valueId = value.id;
+                int valueId = value.getId();
 
                 if( valueId == ValueId.ANNUN_HDG_SEL.toInt() )
                 {

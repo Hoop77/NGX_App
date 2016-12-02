@@ -8,18 +8,20 @@ import java.nio.ByteBuffer;
 
 public class SingleValue
 {
-    public int id;
-    public byte[] value;
+    private int id;
+    private int value;
 
-    public SingleValue( int id, byte[] value )
+    public SingleValue( int id, int value )
     {
         this.id = id;
         this.value = value;
     }
 
+    public int getId() { return id; }
+
     public int getIntValue()
     {
-        return ByteBuffer.wrap( value ).getInt();
+        return value;
     }
 
     public boolean getBooleanValue()
@@ -32,6 +34,12 @@ public class SingleValue
 
     public float getFloatValue()
     {
-        return ByteBuffer.wrap( value ).getFloat();
+        byte[] raw = new byte[ 4 ];
+        raw[ 0 ] = (byte) ((value & 0xff000000) >> 24);
+        raw[ 1 ] = (byte) ((value & 0x00ff0000) >> 16);
+        raw[ 2 ] = (byte) ((value & 0x0000ff00) >> 8);
+        raw[ 3 ] = (byte) (value & 0x000000ff);
+
+        return ByteBuffer.wrap( raw ).getFloat();
     }
 }

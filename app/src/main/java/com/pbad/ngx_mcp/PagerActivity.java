@@ -19,7 +19,7 @@ import java.net.UnknownHostException;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class PagerActivity extends FragmentActivity
+public class PagerActivity extends FragmentActivity implements OnViewCreatedListener
 {
     private MyPagerAdapter myPagerAdapter;
     private ViewPager viewPager;
@@ -61,15 +61,13 @@ public class PagerActivity extends FragmentActivity
     {
         super.onPause();
 
-        notificationClient.stop();
+        //notificationClient.stop();
     }
 
     @Override
     protected void onResume()
     {
         super.onResume();
-
-        notificationClient.start();
     }
 
     private ConnectionManager setupConnectionManager()
@@ -84,17 +82,47 @@ public class PagerActivity extends FragmentActivity
                 switch( newState )
                 {
                     case ALL_CONNECTED:
-                        mainFragment.showConnected();
+                        showConnected();
                         break;
 
                     case NOT_ALL_CONNECTED:
-                        mainFragment.showDisconnected();
+                        showDisconnected();
                         break;
                 }
             }
         } );
 
         return manager;
+    }
+
+    private void showConnected()
+    {
+        runOnUiThread( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                mainFragment.showConnected();
+            }
+        } );
+    }
+
+    private void showDisconnected()
+    {
+        runOnUiThread( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                mainFragment.showDisconnected();
+            }
+        } );
+    }
+
+    @Override
+    public void onViewCreated()
+    {
+        notificationClient.start();
     }
 
     class MyPagerAdapter extends FragmentPagerAdapter
