@@ -1,6 +1,7 @@
 package com.pbad.ngx_mcp;
 
 import android.app.Activity;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 

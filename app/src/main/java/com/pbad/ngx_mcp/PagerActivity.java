@@ -8,6 +8,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.example.phili.ngx_mcp.R;
+import com.pbad.ngx_mcp.networking.CommandClient;
+import com.pbad.ngx_mcp.networking.OnDataReceivedListener;
+import com.pbad.ngx_mcp.networking.Protocol.DataPacket;
+import com.pbad.ngx_mcp.networking.Protocol.SingleValueDataPacket;
 import com.pbad.ngx_mcp.networking.connectionStateManaging.Connection;
 import com.pbad.ngx_mcp.networking.connectionStateManaging.ConnectionManager;
 import com.pbad.ngx_mcp.networking.NotificationClient;
@@ -19,7 +23,7 @@ import java.net.UnknownHostException;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class PagerActivity extends FragmentActivity implements OnViewCreatedListener
+public class PagerActivity extends FragmentActivity
 {
     private MyPagerAdapter myPagerAdapter;
     private ViewPager viewPager;
@@ -28,6 +32,9 @@ public class PagerActivity extends FragmentActivity implements OnViewCreatedList
     private SettingsFragment settingsFragment;
 
     private NotificationClient notificationClient;
+    private CommandClient commandClient;
+
+    private ValueSetter valueSetter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +49,69 @@ public class PagerActivity extends FragmentActivity implements OnViewCreatedList
         viewPager = (ViewPager) findViewById( R.id.pager );
         viewPager.setAdapter( myPagerAdapter );
 
+        valueSetter = new ValueSetter( this );
+
+        setupClients();
+    }
+
+    public void setupClients()
+    {
         // Managing connection states.
-        ConnectionManager connectionStateManager = setupConnectionManager();
-        Connection notificationClientConnection = connectionStateManager.addConnection( "Connection 1" );
+        ConnectionManager connectionManager = setupConnectionManager();
 
         try
         {
-            InetAddress notificationServerAddress = InetAddress.getByName( getString( R.string.default_server_ip ) );
-            notificationClient = new NotificationClient(
-                    notificationServerAddress, 7653, notificationClientConnection, this
-            );
+            // address and ports
+            InetAddress serverAddress = InetAddress.getByName( getString( R.string.default_server_ip ) );
+
+            setupCommandClient( connectionManager, serverAddress );
+            setupNotificationClient( connectionManager, serverAddress );
         }
         catch( UnknownHostException e ) {}
+    }
+
+    void setupNotificationClient( ConnectionManager connectionManager, InetAddress serverAddress )
+    {
+        Connection notificationClientConnection = connectionManager.addConnection( "Connection 1" );
+        int notificationPort = Integer.parseInt( getString( R.string.default_port_1 ) );
+
+        // client threads
+        notificationClient = new NotificationClient(
+                serverAddress,
+                notificationPort,
+                notificationClientConnection
+        );
+
+        notificationClient.setOnDataReceivedListener( new OnDataReceivedListener()
+        {
+            @Override
+            public void onDataReceived( DataPacket packet )
+            {
+                if( packet instanceof SingleValueDataPacket )
+                {
+                    SingleValueDataPacket singleValueDataPacket = (SingleValueDataPacket) packet;
+                    SingleValue singleValue = new SingleValue(
+                            singleValueDataPacket.getValueId(),
+                            singleValueDataPacket.getValue()
+                    );
+
+                    valueSetter.setValue( singleValue );
+                }
+            }
+        } );
+    }
+
+    void setupCommandClient( ConnectionManager connectionManager, InetAddress serverAddress )
+    {
+        Connection commandClientConnection = connectionManager.addConnection( "Connection 2" );
+
+        int commandPort = Integer.parseInt( getString( R.string.default_port_2 ) );
+
+        commandClient = new CommandClient(
+                serverAddress,
+                commandPort,
+                commandClientConnection
+        );
     }
 
     @Override
@@ -119,10 +177,10 @@ public class PagerActivity extends FragmentActivity implements OnViewCreatedList
         } );
     }
 
-    @Override
-    public void onViewCreated()
+    public void connect()
     {
         notificationClient.start();
+        commandClient.start();
     }
 
     class MyPagerAdapter extends FragmentPagerAdapter

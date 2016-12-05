@@ -17,7 +17,7 @@ import com.example.phili.ngx_mcp.R;
 public class MainFragment extends Fragment
 {
     private View view;
-    private OnViewCreatedListener onViewCreatedListener;
+    private PagerActivity pagerActivity;
 
     @Override
     public View onCreateView( LayoutInflater inflater,
@@ -28,7 +28,7 @@ public class MainFragment extends Fragment
         this.view = inflater.inflate( R.layout.main_page, container, false );
 
         showDisconnected();
-        onViewCreatedListener.onViewCreated();
+        pagerActivity.connect();
 
         return view;
     }
@@ -38,7 +38,7 @@ public class MainFragment extends Fragment
     {
         super.onAttach( context );
 
-        onViewCreatedListener = (OnViewCreatedListener) context;
+        pagerActivity = (PagerActivity) context;
     }
 
     public void showConnected()

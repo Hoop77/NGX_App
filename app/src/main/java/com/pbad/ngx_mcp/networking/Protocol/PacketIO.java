@@ -6,6 +6,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
 /**
  * Created by philipp on 01.12.16.
@@ -76,15 +77,13 @@ public class PacketIO
     {
         readNext( args, 6 );
 
-        int valueId =
-            (int) args.buf[ 3 ]
-                + ((int) (args.buf[ 4 ]) << 8);
+        int valueId = (((int) args.buf[ 3 ]) & 0x000000ff)
+                | ((((int) args.buf[ 4 ]) & 0x000000ff) << 8);
 
-        int value =
-            (int) args.buf[ 5 ]
-                + ((int) (args.buf[ 6 ]) << 8)
-                + ((int) (args.buf[ 7 ]) << 16)
-                + ((int) (args.buf[ 8 ]) << 24);
+        int value = (((int) args.buf[ 5 ]) & 0x000000ff)
+                | ((((int) args.buf[ 6 ]) & 0x000000ff) << 8)
+                | ((((int) args.buf[ 7 ]) & 0x000000ff) << 16)
+                | ((((int) args.buf[ 8 ]) & 0x000000ff) << 24);
 
         args.packet = new SingleValueDataPacket( entityId, valueId, value );
     }
@@ -97,11 +96,10 @@ public class PacketIO
         for( int i = 0; i < valueCount; i++ )
         {
             int offset = 3 + i * 4;
-            values[ i ] =
-                (int) args.buf[ offset ]
-                    + ((int) args.buf[ offset + 1 ] << 8)
-                    + ((int) args.buf[ offset + 2 ] << 16)
-                    + ((int) args.buf[ offset + 3 ] << 24);
+            values[ i ] = (((int) args.buf[ offset ]) & 0x000000ff)
+                    | ((((int) args.buf[ offset + 1 ]) & 0x000000ff) << 8)
+                    | ((((int) args.buf[ offset + 2 ]) & 0x000000ff) << 16)
+                    | ((((int) args.buf[ offset + 3 ]) & 0x000000ff) << 24);
         }
 
         args.packet = new AllValuesDataPacket( entityId, values );

@@ -1,14 +1,13 @@
 package com.pbad.ngx_mcp.networking;
 
-import android.app.Activity;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.pbad.ngx_mcp.SingleValue;
-import com.pbad.ngx_mcp.ValueSetter;
 import com.pbad.ngx_mcp.networking.Protocol.Packet;
 import com.pbad.ngx_mcp.networking.Protocol.PacketIO;
 import com.pbad.ngx_mcp.networking.Protocol.ProtocolException;
+import com.pbad.ngx_mcp.networking.Protocol.Response;
 import com.pbad.ngx_mcp.networking.Protocol.SingleValueDataPacket;
 import com.pbad.ngx_mcp.networking.connectionStateManaging.Connection;
 
@@ -29,19 +28,16 @@ public class NotificationClient implements Runnable
 
     private volatile boolean running = false;
     private Thread thread;
-    private Socket client;
-    private ValueSetter valueSetter;
+    private Socket socket;
+    private OnDataReceivedListener onDataReceivedListener;
 
-    private static final byte RESPONSE_OK = 1;
-
-    public NotificationClient( InetAddress serverAddress, int port, Connection connection, Activity activity )
+    public NotificationClient( InetAddress serverAddress, int port, Connection connection )
     {
         this.serverAddress= serverAddress;
         this.port = port;
         this.connection = connection;
 
-        client = new Socket();
-        valueSetter = new ValueSetter( activity );
+        socket = new Socket();
     }
 
     public void setServerAddress( InetAddress serverAddress )
@@ -78,6 +74,7 @@ public class NotificationClient implements Runnable
         catch( InterruptedException e )
         {
             Thread.currentThread().interrupt();
+            Log.d( "NotificationClient", "stop(): join() interrupted!" );
         }
     }
 
@@ -118,7 +115,7 @@ public class NotificationClient implements Runnable
             // a valid socket to connect. If running is false, we prevent using this 'valid' socket from connecting.
             if( running )
             {
-                client.connect( new InetSocketAddress( serverAddress, port ), 5000 );
+                socket.connect( new InetSocketAddress( serverAddress, port ), 5000 );
                 connection.setState( Connection.State.CONNECTED );
             }
         }
@@ -133,7 +130,7 @@ public class NotificationClient implements Runnable
     {
         try
         {
-            Packet packet = PacketIO.read( client.getInputStream() );
+            Packet packet = PacketIO.read( socket.getInputStream() );
             return packet;
         }
         catch( IOException e )
@@ -142,7 +139,7 @@ public class NotificationClient implements Runnable
         }
         catch( ProtocolException e )
         {
-            Log.d( "NotificationClient", "Invalid packet received!" );
+            Log.d( "NotificationClient", "receive(): Invalid packet received!" );
             // TODO: How should we handle invalid packets?
         }
 
@@ -153,7 +150,7 @@ public class NotificationClient implements Runnable
     {
         try
         {
-            client.getOutputStream().write( RESPONSE_OK );
+            socket.getOutputStream().write( Response.OK.toInt() );
             return true;
         }
         catch( IOException e )
@@ -172,7 +169,8 @@ public class NotificationClient implements Runnable
             SingleValueDataPacket singleValueDataPacket = (SingleValueDataPacket) packet;
             SingleValue singleValue = new SingleValue(
                     singleValueDataPacket.getValueId(), singleValueDataPacket.getValue() );
-            valueSetter.setValue( singleValue );
+            if( onDataReceivedListener != null )
+                onDataReceivedListener.onDataReceived( singleValueDataPacket );
         }
     }
 
@@ -180,15 +178,20 @@ public class NotificationClient implements Runnable
     // which closes the socket which should be done on an completely initialized socket.
     private synchronized void newSocket()
     {
-        client = new Socket();
+        socket = new Socket();
     }
 
     private synchronized void closeSocket()
     {
         try
         {
-            client.close();
+            socket.close();
         }
         catch( IOException e ) {}
+    }
+
+    public void setOnDataReceivedListener( OnDataReceivedListener onDataReceivedListener )
+    {
+        this.onDataReceivedListener = onDataReceivedListener;
     }
 }
