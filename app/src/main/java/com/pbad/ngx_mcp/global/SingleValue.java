@@ -1,4 +1,4 @@
-package com.pbad.ngx_mcp;
+package com.pbad.ngx_mcp.global;
 
 import java.nio.ByteBuffer;
 

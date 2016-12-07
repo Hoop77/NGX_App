@@ -17,11 +17,11 @@ public class Connection
         void onStateChanged( State newState );
     }
 
-    protected int id;
-    protected String userId;
-    protected State state;
-    protected ConnectionManager manager;
-    protected OnStateChangedListener onStateChangedListener;
+    private int id;
+    private String userId;
+    private State state;
+    private ConnectionManager manager;
+    private OnStateChangedListener onStateChangedListener;
 
     protected Connection( int id, String userId, ConnectionManager manager )
     {

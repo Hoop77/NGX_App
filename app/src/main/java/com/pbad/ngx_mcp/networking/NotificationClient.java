@@ -1,9 +1,8 @@
 package com.pbad.ngx_mcp.networking;
 
-import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.pbad.ngx_mcp.SingleValue;
+import com.pbad.ngx_mcp.global.SingleValue;
 import com.pbad.ngx_mcp.networking.Protocol.Packet;
 import com.pbad.ngx_mcp.networking.Protocol.PacketIO;
 import com.pbad.ngx_mcp.networking.Protocol.ProtocolException;
@@ -65,7 +64,7 @@ public class NotificationClient implements Runnable
             return;
 
         running = false;
-        closeSocket();
+        close();
 
         try
         {
@@ -81,84 +80,68 @@ public class NotificationClient implements Runnable
     @Override
     public void run()
     {
+        connection.setState( Connection.State.DISCONNECTED );
+
         running = true;
         while( running )
         {
-            if( connection.getState() == Connection.State.DISCONNECTED )
+            try
             {
-                tryConnect();
-                continue;
+                if( connection.getState() == Connection.State.DISCONNECTED )
+                    connect();
+
+                Packet packet = receive();
+                respond();
+                interpret( packet );
             }
-
-            Packet packet = receive();
-            if( packet == null )
-                continue;
-
-            if( !respond() )
-                continue;
-
-            interpret( packet );
-        }
-
-        closeSocket();
-    }
-
-    private void tryConnect()
-    {
-        try
-        {
-            closeSocket();
-            newSocket();
-            // We need the next check for proper multithreading:
-            // If "stop()" gets called (from a different thread), we set running to false and closeSocket the socket.
-            // But if this closeSocket operation is called before "newSocket()" gets called, we would still have
-            // a valid socket to connect. If running is false, we prevent using this 'valid' socket from connecting.
-            if( running )
+            catch( IOException e )
             {
-                socket.connect( new InetSocketAddress( serverAddress, port ), 5000 );
-                connection.setState( Connection.State.CONNECTED );
+                close();
+            }
+            catch( ProtocolException e )
+            {
+                // Since this would mean a bug in the Protocol or someone spams us,
+                // we leave this unhandled and return null.
+                Log.d( "NotificationClient", "receive(): Invalid packet received!" );
             }
         }
+
+        close();
+    }
+
+    private synchronized void connect() throws IOException
+    {
+        // Throw IOException to signal that we're not connected.
+        if( !running )
+            throw new IOException();
+
+        socket = new Socket();
+        socket.connect( new InetSocketAddress( serverAddress, port ), 5000 );
+        connection.setState( Connection.State.CONNECTED );
+    }
+
+    private synchronized void close()
+    {
+        connection.setState( Connection.State.DISCONNECTED );
+
+        try
+        {
+            socket.close();
+        }
         catch( IOException e )
         {
-            connection.setState( Connection.State.DISCONNECTED );
+            // Nothing to handle - we will use a new socket when reconnecting anyway.
         }
     }
 
-    @Nullable
-    private Packet receive()
+    private Packet receive() throws IOException, ProtocolException
     {
-        try
-        {
-            Packet packet = PacketIO.read( socket.getInputStream() );
-            return packet;
-        }
-        catch( IOException e )
-        {
-            connection.setState( Connection.State.DISCONNECTED );
-        }
-        catch( ProtocolException e )
-        {
-            Log.d( "NotificationClient", "receive(): Invalid packet received!" );
-            // TODO: How should we handle invalid packets?
-        }
-
-        return null;
+        return PacketIO.read( socket.getInputStream() );
     }
 
-    private boolean respond()
+    private void respond() throws IOException
     {
-        try
-        {
-            socket.getOutputStream().write( Response.OK.toInt() );
-            return true;
-        }
-        catch( IOException e )
-        {
-            connection.setState( Connection.State.DISCONNECTED );
-        }
-
-        return false;
+        socket.getOutputStream().write( Response.OK.toInt() );
     }
 
     private void interpret( Packet packet )
@@ -172,22 +155,6 @@ public class NotificationClient implements Runnable
             if( onDataReceivedListener != null )
                 onDataReceivedListener.onDataReceived( singleValueDataPacket );
         }
-    }
-
-    // newSocket() and closeSocket() need to be synchronized because another thread may call stop()
-    // which closes the socket which should be done on an completely initialized socket.
-    private synchronized void newSocket()
-    {
-        socket = new Socket();
-    }
-
-    private synchronized void closeSocket()
-    {
-        try
-        {
-            socket.close();
-        }
-        catch( IOException e ) {}
     }
 
     public void setOnDataReceivedListener( OnDataReceivedListener onDataReceivedListener )

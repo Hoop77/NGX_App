@@ -23,8 +23,6 @@ public class ConnectionManager
     private OnStateChangedListener onStateChangedListener;
     private State state = State.NOT_ALL_CONNECTED;
 
-    private Object stateLock = new Object();
-
     public ConnectionManager()
     {
         connections = new ArrayList<>();
@@ -42,60 +40,38 @@ public class ConnectionManager
     {
         boolean stateChanged = false;
 
-        switch( connection.state )
+        if( connection.getState() == Connection.State.CONNECTED
+            && state == State.NOT_ALL_CONNECTED )
         {
-            case CONNECTED:
-
-                switch( state )
+            // check if now all are connected
+            boolean allAreConnected = true;
+            for( Connection conn : connections )
+            {
+                if( conn.getState() != Connection.State.CONNECTED )
                 {
-                    case ALL_CONNECTED:
-                        // no state change
-                        break;
-
-                    case NOT_ALL_CONNECTED:
-                        // check if now all are connected
-                        boolean allAreConnected = true;
-                        for( Connection conn : connections )
-                        {
-                            if( conn.state != Connection.State.CONNECTED )
-                            {
-                                allAreConnected = false;
-                                break;
-                            }
-                        }
-                        if( allAreConnected )
-                        {
-                            state = State.ALL_CONNECTED;
-                            stateChanged = true;
-                        }
-
-                        break;
+                    allAreConnected = false;
+                    break;
                 }
+            }
 
-                break;
-
-            case DISCONNECTED:
-
-                switch( state )
-                {
-                    case ALL_CONNECTED:
-                        state = State.NOT_ALL_CONNECTED;
-                        stateChanged = true;
-                        break;
-
-                    case NOT_ALL_CONNECTED:
-                        // no state change
-                        break;
-                }
-
-                break;
+            if( allAreConnected )
+            {
+                state = State.ALL_CONNECTED;
+                stateChanged = true;
+            }
+        }
+        else if( connection.getState() == Connection.State.DISCONNECTED
+            && state == State.ALL_CONNECTED )
+        {
+            state = State.NOT_ALL_CONNECTED;
+            stateChanged = true;
         }
 
         if( stateChanged && onStateChangedListener != null )
             onStateChangedListener.onStateChanged( state );
     }
 
-    public void setOnStateChangedListener( OnStateChangedListener onStateChangedListener )
+    public synchronized void setOnStateChangedListener( OnStateChangedListener onStateChangedListener )
     {
         this.onStateChangedListener = onStateChangedListener;
     }

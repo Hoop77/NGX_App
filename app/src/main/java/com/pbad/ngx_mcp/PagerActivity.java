@@ -8,8 +8,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.example.phili.ngx_mcp.R;
+import com.pbad.ngx_mcp.global.SingleValue;
 import com.pbad.ngx_mcp.networking.CommandClient;
 import com.pbad.ngx_mcp.networking.OnDataReceivedListener;
+import com.pbad.ngx_mcp.networking.Protocol.AllValuesDataPacket;
 import com.pbad.ngx_mcp.networking.Protocol.DataPacket;
 import com.pbad.ngx_mcp.networking.Protocol.SingleValueDataPacket;
 import com.pbad.ngx_mcp.networking.connectionStateManaging.Connection;
@@ -90,12 +92,11 @@ public class PagerActivity extends FragmentActivity
                 if( packet instanceof SingleValueDataPacket )
                 {
                     SingleValueDataPacket singleValueDataPacket = (SingleValueDataPacket) packet;
-                    SingleValue singleValue = new SingleValue(
-                            singleValueDataPacket.getValueId(),
-                            singleValueDataPacket.getValue()
+                    valueSetter.setValue(
+                        singleValueDataPacket.getEntityId(),
+                        singleValueDataPacket.getValueId(),
+                        singleValueDataPacket.getValue()
                     );
-
-                    valueSetter.setValue( singleValue );
                 }
             }
         } );
@@ -112,6 +113,24 @@ public class PagerActivity extends FragmentActivity
                 commandPort,
                 commandClientConnection
         );
+
+        commandClient.setOnDataReceivedListener( new OnDataReceivedListener()
+        {
+            @Override
+            public void onDataReceived( DataPacket packet )
+            {
+                if( packet instanceof AllValuesDataPacket )
+                {
+                    AllValuesDataPacket allValuesDataPacket = (AllValuesDataPacket) packet;
+                    int entityId = allValuesDataPacket.getEntityId();
+                    int[] values = allValuesDataPacket.getValues();
+                    for( int id = 0; id < values.length; id++ )
+                    {
+                        valueSetter.setValue( entityId, id, values[ id ] );
+                    }
+                }
+            }
+        } );
     }
 
     @Override

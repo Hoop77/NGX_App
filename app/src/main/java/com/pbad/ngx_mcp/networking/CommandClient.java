@@ -3,7 +3,7 @@ package com.pbad.ngx_mcp.networking;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.pbad.ngx_mcp.EventId;
+import com.pbad.ngx_mcp.global.EventId;
 import com.pbad.ngx_mcp.networking.Protocol.AllValuesRequestPacket;
 import com.pbad.ngx_mcp.networking.Protocol.DataPacket;
 import com.pbad.ngx_mcp.networking.Protocol.EventPacket;
@@ -18,8 +18,11 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -31,11 +34,12 @@ public class CommandClient implements Runnable
     private InetAddress serverAddress;
     private int port;
     private Connection connection;
+    private Socket socket;
 
     private boolean running = false;
     private Thread thread;
 
-    private BlockingDeque<Packet> packetQueue = new LinkedBlockingDeque<>();
+    private BlockingQueue<Packet> packetQueue = new LinkedBlockingQueue<>( 100 );
 
     private OnDataReceivedListener onDataReceivedListener;
 
@@ -44,6 +48,8 @@ public class CommandClient implements Runnable
         this.serverAddress = serverAddress;
         this.port = port;
         this.connection = connection;
+
+        socket = new Socket();
 
         thread = new Thread( this );
     }
@@ -56,6 +62,8 @@ public class CommandClient implements Runnable
     public void stop()
     {
         running = false;
+        close();
+
         try
         {
             thread.join();
@@ -78,6 +86,10 @@ public class CommandClient implements Runnable
 
         while( running )
         {
+            // Polling packets from the queue and send them to the server (eventually receive requested data packets).
+            // If connection fails (IOException is thrown), keep trying to send the last polled packet.
+            // If a ProtocolException is thrown, discard the packet - there must be a bug in this case or someone spams us
+            // so we prevent the queue from overflowing.
             try
             {
                 if( !retry )
@@ -87,134 +99,101 @@ public class CommandClient implements Runnable
                         continue;
                 }
 
-                boolean success = handlePacketIO( packet );
-                // only retry when disconnected
-                if( success || connection.getState() == Connection.State.CONNECTED )
-                    retry = false;
-                else
-                    retry = true;
+                handlePacketIO( packet );
+                retry = false;
             }
             catch( InterruptedException e )
             {
                 Thread.currentThread().interrupt();
-                Log.d( "CommandClient", "run(): packetQueue.poll() interrupted!" );
+                Log.d( "CommandClient", "run(): poll() interrupted!" );
+            }
+            catch( IOException e )
+            {
+                retry = true;
+            }
+            catch( ProtocolException e )
+            {
+                retry = false;
             }
         }
     }
 
-    private boolean handlePacketIO( Packet packet )
-    {
-        Socket socket = connect();
-        if( socket == null )
-            return false;
-
-        boolean connected = sendPacket( packet, socket );
-        if( !connected )
-            return false;
-
-        if( packet instanceof EventPacket )
-        {
-            connected = receiveResponse( socket );
-            if( !connected )
-                return false;
-        }
-        else if( packet instanceof RequestPacket )
-        {
-            DataPacket requestedDataPacket = receiveRequest( socket );
-            if( requestedDataPacket == null )
-                return false;
-
-            if( onDataReceivedListener != null)
-                onDataReceivedListener.onDataReceived( requestedDataPacket );
-        }
-
-        close( socket );
-
-        return true;
-    }
-
-    @Nullable
-    private Socket connect()
+    private void handlePacketIO( Packet packet ) throws IOException, ProtocolException
     {
         try
         {
-            Socket socket = new Socket();
-            socket.connect( new InetSocketAddress( serverAddress, port ), 1000 );
-            connection.setState( Connection.State.CONNECTED );
-            return socket;
-        }
-        catch( IOException e )
-        {
-            connection.setState( Connection.State.DISCONNECTED );
-        }
-
-        return null;
-    }
-
-    private boolean sendPacket( Packet packet, Socket socket )
-    {
-        try
-        {
+            connect();
             PacketIO.write( packet, socket.getOutputStream() );
-            return true;
+
+            if( packet instanceof EventPacket )
+            {
+                receiveResponse();
+            }
+            else if( packet instanceof RequestPacket )
+            {
+                DataPacket requestedDataPacket = receiveRequest();
+                if( requestedDataPacket != null
+                    && onDataReceivedListener != null )
+                {
+                    onDataReceivedListener.onDataReceived( requestedDataPacket );
+                }
+            }
+        }
+        catch( IOException e )
+        {
+            throw e;
         }
         catch( ProtocolException e )
         {
-            Log.d( "CommandClient", "sendPacket(): Invalid packet!" );
-            // TODO: How should we handle invalid packets?
+            throw e;
         }
-        catch( IOException e )
+        finally
         {
-            connection.setState( Connection.State.DISCONNECTED );
+            close();
         }
-
-        return false;
     }
 
-    private boolean receiveResponse( Socket socket )
+    private synchronized void connect() throws IOException
     {
-        try
-        {
-            int response = socket.getInputStream().read();
-            if( response == Response.OK.toInt() )
-                return true;
-        }
-        catch( IOException e )
-        {
-            connection.setState( Connection.State.DISCONNECTED );
-        }
+        // Throw IOException to signal that we're not connected.
+        if( !running )
+            throw new IOException();
 
-        return false;
+        socket = new Socket();
+        socket.connect( new InetSocketAddress( serverAddress, port ), 5000 );
+        connection.setState( Connection.State.CONNECTED );
     }
 
-    private DataPacket receiveRequest( Socket socket )
+    private synchronized void close()
     {
-        try
-        {
-            Packet packet = PacketIO.read( socket.getInputStream() );
-            if( packet instanceof DataPacket )
-                return (DataPacket) packet;
-        }
-        catch( IOException e )
-        {
-            connection.setState( Connection.State.DISCONNECTED );
-        }
-        catch( ProtocolException e )
-        {
-            Log.d( "CommandClient", "receiveRequest(): Invalid packet received!" );
-            // TODO: How should we handle invalid packets?
-        }
+        connection.setState( Connection.State.DISCONNECTED );
 
-        return null;
-    }
-
-    private void close( Socket socket )
-    {
         try
         {
             socket.close();
         }
-        catch( IOException e ) {}
+        catch( IOException e )
+        {
+            // Nothing to handle - we will use a new socket when reconnecting anyway.
+        }
+    }
+
+    private void receiveResponse() throws IOException, ProtocolException
+    {
+        int response = socket.getInputStream().read();
+        if( response == Response.OK.toInt() )
+            throw new ProtocolException();
+    }
+
+    @Nullable
+    private DataPacket receiveRequest() throws IOException, ProtocolException
+    {
+        Packet packet = PacketIO.read( socket.getInputStream() );
+
+        if( packet instanceof DataPacket )
+            return (DataPacket) packet;
+
+        return null;
     }
 
     public boolean requestAllValues( int entityId )

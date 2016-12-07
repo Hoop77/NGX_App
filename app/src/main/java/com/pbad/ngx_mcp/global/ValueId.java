@@ -1,4 +1,4 @@
-package com.pbad.ngx_mcp;
+package com.pbad.ngx_mcp.global;
 
 /**
  * Created by phili on 05.11.2016.
