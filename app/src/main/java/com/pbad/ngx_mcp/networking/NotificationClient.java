@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.pbad.ngx_mcp.global.SingleValue;
 import com.pbad.ngx_mcp.networking.Protocol.Packet;
-import com.pbad.ngx_mcp.networking.Protocol.PacketIO;
+import com.pbad.ngx_mcp.networking.Protocol.PacketReader;
 import com.pbad.ngx_mcp.networking.Protocol.ProtocolException;
 import com.pbad.ngx_mcp.networking.Protocol.Response;
 import com.pbad.ngx_mcp.networking.Protocol.SingleValueDataPacket;
@@ -136,7 +136,7 @@ public class NotificationClient implements Runnable
 
     private Packet receive() throws IOException, ProtocolException
     {
-        return PacketIO.read( socket.getInputStream() );
+        return new PacketReader( socket.getInputStream() ).read();
     }
 
     private void respond() throws IOException

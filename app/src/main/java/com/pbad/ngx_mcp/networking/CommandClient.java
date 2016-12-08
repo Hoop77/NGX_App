@@ -8,7 +8,8 @@ import com.pbad.ngx_mcp.networking.Protocol.AllValuesRequestPacket;
 import com.pbad.ngx_mcp.networking.Protocol.DataPacket;
 import com.pbad.ngx_mcp.networking.Protocol.EventPacket;
 import com.pbad.ngx_mcp.networking.Protocol.Packet;
-import com.pbad.ngx_mcp.networking.Protocol.PacketIO;
+import com.pbad.ngx_mcp.networking.Protocol.PacketReader;
+import com.pbad.ngx_mcp.networking.Protocol.PacketWriter;
 import com.pbad.ngx_mcp.networking.Protocol.ProtocolException;
 import com.pbad.ngx_mcp.networking.Protocol.RequestPacket;
 import com.pbad.ngx_mcp.networking.Protocol.Response;
@@ -18,10 +19,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -123,7 +121,7 @@ public class CommandClient implements Runnable
         try
         {
             connect();
-            PacketIO.write( packet, socket.getOutputStream() );
+            new PacketWriter( socket.getOutputStream() ).write( packet );
 
             if( packet instanceof EventPacket )
             {
@@ -188,7 +186,7 @@ public class CommandClient implements Runnable
     @Nullable
     private DataPacket receiveRequest() throws IOException, ProtocolException
     {
-        Packet packet = PacketIO.read( socket.getInputStream() );
+        Packet packet = new PacketReader( socket.getInputStream() ).read();
 
         if( packet instanceof DataPacket )
             return (DataPacket) packet;
