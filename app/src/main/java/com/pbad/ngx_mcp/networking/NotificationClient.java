@@ -19,62 +19,11 @@ import java.net.Socket;
  * Created by phili on 04.11.2016.
  */
 
-public class NotificationClient implements Runnable
+public class NotificationClient extends Client
 {
-    private InetAddress serverAddress;
-    private int port;
-    private Connection connection;
-
-    private volatile boolean running = false;
-    private Thread thread;
-    private Socket socket;
-    private OnDataReceivedListener onDataReceivedListener;
-
     public NotificationClient( InetAddress serverAddress, int port, Connection connection )
     {
-        this.serverAddress= serverAddress;
-        this.port = port;
-        this.connection = connection;
-
-        socket = new Socket();
-    }
-
-    public void setServerAddress( InetAddress serverAddress )
-    {
-        this.serverAddress = serverAddress;
-    }
-
-    private void setPort( int port )
-    {
-        this.port = port;
-    }
-
-    public void start()
-    {
-        if( running )
-            return;
-
-        thread = new Thread( this );
-        thread.start();
-    }
-
-    public void stop()
-    {
-        if( !running )
-            return;
-
-        running = false;
-        close();
-
-        try
-        {
-            thread.join();
-        }
-        catch( InterruptedException e )
-        {
-            Thread.currentThread().interrupt();
-            Log.d( "NotificationClient", "stop(): join() interrupted!" );
-        }
+        super( serverAddress, port, connection );
     }
 
     @Override
@@ -109,31 +58,6 @@ public class NotificationClient implements Runnable
         close();
     }
 
-    private synchronized void connect() throws IOException
-    {
-        // Throw IOException to signal that we're not connected.
-        if( !running )
-            throw new IOException();
-
-        socket = new Socket();
-        socket.connect( new InetSocketAddress( serverAddress, port ), 5000 );
-        connection.setState( Connection.State.CONNECTED );
-    }
-
-    private synchronized void close()
-    {
-        connection.setState( Connection.State.DISCONNECTED );
-
-        try
-        {
-            socket.close();
-        }
-        catch( IOException e )
-        {
-            // Nothing to handle - we will use a new socket when reconnecting anyway.
-        }
-    }
-
     private Packet receive() throws IOException, ProtocolException
     {
         return new PacketReader( socket.getInputStream() ).read();
@@ -155,10 +79,5 @@ public class NotificationClient implements Runnable
             if( onDataReceivedListener != null )
                 onDataReceivedListener.onDataReceived( singleValueDataPacket );
         }
-    }
-
-    public void setOnDataReceivedListener( OnDataReceivedListener onDataReceivedListener )
-    {
-        this.onDataReceivedListener = onDataReceivedListener;
     }
 }

@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ToggleButton;
 
 import com.example.phili.ngx_mcp.R;
 
@@ -17,7 +18,7 @@ import com.example.phili.ngx_mcp.R;
 public class MainFragment extends Fragment
 {
     private View view;
-    private PagerActivity pagerActivity;
+    private SimConnectCommander commander;
 
     @Override
     public View onCreateView( LayoutInflater inflater,
@@ -28,9 +29,25 @@ public class MainFragment extends Fragment
         this.view = inflater.inflate( R.layout.main_page, container, false );
 
         showDisconnected();
-        pagerActivity.connect();
+        commander.connect();
+
+        setupEvents();
 
         return view;
+    }
+
+    private void setupEvents()
+    {
+
+        ToggleButton btn = (ToggleButton) view.findViewById( R.id.hdg_sel_switch );
+        btn.setOnClickListener( new View.OnClickListener()
+        {
+            @Override
+            public void onClick( View v )
+            {
+                //commander.sendEvent( EntityId.MCP.toInt(),  )
+            }
+        } );
     }
 
     @Override
@@ -38,7 +55,7 @@ public class MainFragment extends Fragment
     {
         super.onAttach( context );
 
-        pagerActivity = (PagerActivity) context;
+        commander = (SimConnectCommander) context;
     }
 
     public void showConnected()

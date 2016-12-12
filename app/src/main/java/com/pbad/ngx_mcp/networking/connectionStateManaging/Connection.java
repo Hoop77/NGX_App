@@ -6,6 +6,11 @@ package com.pbad.ngx_mcp.networking.connectionStateManaging;
 
 public class Connection
 {
+    private int id;
+    private State state;
+    private ConnectionManager manager;
+    private OnStateChangedListener onStateChangedListener;
+
     public enum State
     {
         CONNECTED,
@@ -17,21 +22,14 @@ public class Connection
         void onStateChanged( State newState );
     }
 
-    private int id;
-    private String userId;
-    private State state;
-    private ConnectionManager manager;
-    private OnStateChangedListener onStateChangedListener;
-
-    protected Connection( int id, String userId, ConnectionManager manager )
+    protected Connection( int id, ConnectionManager manager )
     {
         this.id = id;
-        this.userId = userId;
         this.state = State.DISCONNECTED;
         this.manager = manager;
     }
 
-    public void setState( State newState )
+    public synchronized void setState( State newState )
     {
         State oldState = state;
         if( oldState != newState )
@@ -43,11 +41,15 @@ public class Connection
         }
     }
 
+    public synchronized State getState() { return state; }
+
+    public int getId()
+    {
+        return id;
+    }
+
     public void setOnConnectionStateChangedListener( OnStateChangedListener onStateChangedListener )
     {
         this.onStateChangedListener = onStateChangedListener;
     }
-
-    public State getState() { return state; }
-    public String getUserId() { return userId; }
 }

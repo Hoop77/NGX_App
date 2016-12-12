@@ -3,7 +3,6 @@ package com.pbad.ngx_mcp.networking;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.pbad.ngx_mcp.global.EventId;
 import com.pbad.ngx_mcp.networking.Protocol.AllValuesRequestPacket;
 import com.pbad.ngx_mcp.networking.Protocol.DataPacket;
 import com.pbad.ngx_mcp.networking.Protocol.EventPacket;
@@ -17,8 +16,6 @@ import com.pbad.ngx_mcp.networking.connectionStateManaging.Connection;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -27,50 +24,13 @@ import java.util.concurrent.TimeUnit;
  * Created by phili on 07.11.2016.
  */
 
-public class CommandClient implements Runnable
+public class CommandClient extends Client
 {
-    private InetAddress serverAddress;
-    private int port;
-    private Connection connection;
-    private Socket socket;
-
-    private boolean running = false;
-    private Thread thread;
-
     private BlockingQueue<Packet> packetQueue = new LinkedBlockingQueue<>( 100 );
-
-    private OnDataReceivedListener onDataReceivedListener;
 
     public CommandClient( InetAddress serverAddress, int port, Connection connection )
     {
-        this.serverAddress = serverAddress;
-        this.port = port;
-        this.connection = connection;
-
-        socket = new Socket();
-
-        thread = new Thread( this );
-    }
-
-    public void start()
-    {
-        thread.start();
-    }
-
-    public void stop()
-    {
-        running = false;
-        close();
-
-        try
-        {
-            thread.join();
-        }
-        catch( InterruptedException e )
-        {
-            Thread.currentThread().interrupt();
-            Log.d( "CommandClient", "stop(): join() interrupted!" );
-        }
+        super( serverAddress, port, connection );
     }
 
     @Override
@@ -151,31 +111,6 @@ public class CommandClient implements Runnable
         }
     }
 
-    private synchronized void connect() throws IOException
-    {
-        // Throw IOException to signal that we're not connected.
-        if( !running )
-            throw new IOException();
-
-        socket = new Socket();
-        socket.connect( new InetSocketAddress( serverAddress, port ), 5000 );
-        connection.setState( Connection.State.CONNECTED );
-    }
-
-    private synchronized void close()
-    {
-        connection.setState( Connection.State.DISCONNECTED );
-
-        try
-        {
-            socket.close();
-        }
-        catch( IOException e )
-        {
-            // Nothing to handle - we will use a new socket when reconnecting anyway.
-        }
-    }
-
     private void receiveResponse() throws IOException, ProtocolException
     {
         int response = socket.getInputStream().read();
@@ -199,13 +134,8 @@ public class CommandClient implements Runnable
         return packetQueue.offer( new AllValuesRequestPacket( entityId ) );
     }
 
-    public boolean sendEvent( int entityId, EventId eventId, int eventParameter )
+    public boolean sendEvent( int entityId, int eventId, int eventParameter )
     {
-        return packetQueue.offer( new EventPacket( entityId, entityId, eventParameter ) );
-    }
-
-    public void setOnDataReceivedListener( OnDataReceivedListener onDataReceivedListener )
-    {
-        this.onDataReceivedListener = onDataReceivedListener;
+        return packetQueue.offer( new EventPacket( entityId, eventId, eventParameter ) );
     }
 }

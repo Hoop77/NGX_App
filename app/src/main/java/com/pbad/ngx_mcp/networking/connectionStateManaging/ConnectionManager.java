@@ -10,56 +10,33 @@ public class ConnectionManager
 {
     private ArrayList<Connection> connections = new ArrayList<>();
     private OnStateChangedListener onStateChangedListener;
-    private State state = new NotAllConnectedState();
-    private Connection connection;
 
-    public ConnectionManager() {}
+    private final ManagerState allConnectedState = new AllConnectedState();
+    private final ManagerState notAllConnectedState = new NotAllConnectedState();
 
-    public synchronized Connection addConnection( String userId )
-    {
-        int id = connections.size();
-        Connection connection = new Connection( id, userId, this );
-        connections.add( connection );
-        return connection;
-    }
+    private ManagerState currentState = new NotAllConnectedState();
 
-    protected synchronized void connectionStateChanged( Connection connection )
-    {
-        this.connection = connection;
-        state = state.transition();
-    }
-
-    public synchronized void setOnStateChangedListener( OnStateChangedListener onStateChangedListener )
-    {
-        this.onStateChangedListener = onStateChangedListener;
-    }
-
-    public interface State
-    {
-        State transition();
-    }
-
-    public class AllConnectedState implements State
+    private class AllConnectedState implements ManagerState
     {
         @Override
-        public State transition()
+        public ManagerState connectionStateChanged( Connection connection )
         {
             if( connection.getState() == Connection.State.DISCONNECTED )
             {
-                State newState = this;
+                ManagerState newState = notAllConnectedState;
                 if( onStateChangedListener != null )
-                    onStateChangedListener.onStateChanged( newState );
+                    onStateChangedListener.onNotAllConnected();
                 return newState;
             }
 
-            return new AllConnectedState();
+            return allConnectedState;
         }
     }
 
-    public class NotAllConnectedState implements State
+    private class NotAllConnectedState implements ManagerState
     {
         @Override
-        public State transition()
+        public ManagerState connectionStateChanged( Connection connection )
         {
             if( connection.getState() == Connection.State.CONNECTED )
             {
@@ -76,19 +53,54 @@ public class ConnectionManager
 
                 if( allAreConnected )
                 {
-                    State newState = this;
                     if( onStateChangedListener != null )
-                        onStateChangedListener.onStateChanged( newState );
-                    return newState;
+                        onStateChangedListener.onAllConnected();
+                    return allConnectedState;
                 }
             }
 
-            return new NotAllConnectedState();
+            return notAllConnectedState;
         }
     }
 
     public interface OnStateChangedListener
     {
-        void onStateChanged( State newState );
+        void onAllConnected();
+        void onNotAllConnected();
+    }
+
+    public ConnectionManager() {}
+
+    public synchronized Connection addConnection( String userId )
+    {
+        int id = connections.size();
+        Connection connection = new Connection( id, this );
+        connections.add( connection );
+        return connection;
+    }
+
+    public synchronized void removeConnection( Connection connectionToRemove )
+    {
+        for( int i = 0; i < connections.size(); i++ )
+        {
+            Connection connection = connections.get( i );
+            if( connection.getId() == connectionToRemove.getId() )
+                connections.remove( i );
+        }
+    }
+
+    protected synchronized void connectionStateChanged( Connection connection )
+    {
+        currentState = currentState.connectionStateChanged( connection );
+    }
+
+    public void setOnStateChangedListener( OnStateChangedListener onStateChangedListener )
+    {
+        this.onStateChangedListener = onStateChangedListener;
+    }
+
+    private interface ManagerState
+    {
+        ManagerState connectionStateChanged( Connection connection );
     }
 }

@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.example.phili.ngx_mcp.R;
-import com.pbad.ngx_mcp.global.SingleValue;
+import com.pbad.ngx_mcp.global.EntityId;
 import com.pbad.ngx_mcp.networking.CommandClient;
 import com.pbad.ngx_mcp.networking.OnDataReceivedListener;
 import com.pbad.ngx_mcp.networking.Protocol.AllValuesDataPacket;
@@ -21,11 +21,7 @@ import com.pbad.ngx_mcp.networking.NotificationClient;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
-public class PagerActivity extends FragmentActivity
+public class PagerActivity extends FragmentActivity implements SimConnectCommander
 {
     private MyPagerAdapter myPagerAdapter;
     private ViewPager viewPager;
@@ -33,20 +29,70 @@ public class PagerActivity extends FragmentActivity
     private MainFragment mainFragment;
     private SettingsFragment settingsFragment;
 
+    private ConnectionManager connectionManager;
     private NotificationClient notificationClient;
     private CommandClient commandClient;
 
     private ValueSetter valueSetter;
 
+    class MyPagerAdapter extends FragmentPagerAdapter
+    {
+        public MyPagerAdapter( FragmentManager fm )
+        {
+            super( fm );
+        }
+
+        @Override
+        public Fragment getItem( int position )
+        {
+            if( position == 0 )
+                return mainFragment;
+
+            return settingsFragment;
+        }
+
+        @Override
+        public int getCount()
+        {
+            return 2;
+        }
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void connect()
+    {
+        notificationClient.start();
+        commandClient.start();
+    }
+
+    @Override
+    public boolean requestAllValuesFromAllEntities()
+    {
+        for( int i = 0; i < EntityId.COUNT.toInt(); i++ )
+        {
+            boolean success = commandClient.requestAllValues( i );
+            if( !success )
+                return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean sendEvent( int entityId, int eventId, int eventParameter )
+    {
+        return commandClient.sendEvent( entityId, eventId, eventParameter );
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.pager );
 
         mainFragment = new MainFragment();
         settingsFragment = new SettingsFragment();
 
-        // pager and fragments setup
         myPagerAdapter = new MyPagerAdapter( getSupportFragmentManager() );
         viewPager = (ViewPager) findViewById( R.id.pager );
         viewPager.setAdapter( myPagerAdapter );
@@ -56,14 +102,24 @@ public class PagerActivity extends FragmentActivity
         setupClients();
     }
 
-    public void setupClients()
+    @Override
+    protected void onPause()
     {
-        // Managing connection states.
-        ConnectionManager connectionManager = setupConnectionManager();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+    }
+
+    private void setupClients()
+    {
+        setupConnectionManager();
 
         try
         {
-            // address and ports
             InetAddress serverAddress = InetAddress.getByName( getString( R.string.default_server_ip ) );
 
             setupCommandClient( connectionManager, serverAddress );
@@ -72,16 +128,49 @@ public class PagerActivity extends FragmentActivity
         catch( UnknownHostException e ) {}
     }
 
-    void setupNotificationClient( ConnectionManager connectionManager, InetAddress serverAddress )
+    private void setupConnectionManager()
+    {
+        connectionManager = new ConnectionManager();
+
+        connectionManager.setOnStateChangedListener( new ConnectionManager.OnStateChangedListener()
+        {
+            @Override
+            public void onAllConnected()
+            {
+                showConnected();
+            }
+
+            @Override
+            public void onNotAllConnected()
+            {
+                showDisconnected();
+            }
+        } );
+    }
+
+    private void setupNotificationClient( ConnectionManager connectionManager, InetAddress serverAddress )
     {
         Connection notificationClientConnection = connectionManager.addConnection( "Connection 1" );
+        notificationClientConnection.setOnConnectionStateChangedListener( new Connection.OnStateChangedListener()
+        {
+            @Override
+            public void onStateChanged( Connection.State newState )
+            {
+                if( newState == Connection.State.CONNECTED )
+                {
+                    // On reconnect: update all values.
+                    requestAllValuesFromAllEntities();
+                }
+            }
+        } );
+
         int notificationPort = Integer.parseInt( getString( R.string.default_port_1 ) );
 
         // client threads
         notificationClient = new NotificationClient(
-                serverAddress,
-                notificationPort,
-                notificationClientConnection
+            serverAddress,
+            notificationPort,
+            notificationClientConnection
         );
 
         notificationClient.setOnDataReceivedListener( new OnDataReceivedListener()
@@ -102,16 +191,16 @@ public class PagerActivity extends FragmentActivity
         } );
     }
 
-    void setupCommandClient( ConnectionManager connectionManager, InetAddress serverAddress )
+    private void setupCommandClient( ConnectionManager connectionManager, InetAddress serverAddress )
     {
         Connection commandClientConnection = connectionManager.addConnection( "Connection 2" );
 
         int commandPort = Integer.parseInt( getString( R.string.default_port_2 ) );
 
         commandClient = new CommandClient(
-                serverAddress,
-                commandPort,
-                commandClientConnection
+            serverAddress,
+            commandPort,
+            commandClientConnection
         );
 
         commandClient.setOnDataReceivedListener( new OnDataReceivedListener()
@@ -122,54 +211,13 @@ public class PagerActivity extends FragmentActivity
                 if( packet instanceof AllValuesDataPacket )
                 {
                     AllValuesDataPacket allValuesDataPacket = (AllValuesDataPacket) packet;
-                    int entityId = allValuesDataPacket.getEntityId();
-                    int[] values = allValuesDataPacket.getValues();
-                    for( int id = 0; id < values.length; id++ )
-                    {
-                        valueSetter.setValue( entityId, id, values[ id ] );
-                    }
+                    valueSetter.setAllValues(
+                        allValuesDataPacket.getEntityId(),
+                        allValuesDataPacket.getValues()
+                    );
                 }
             }
         } );
-    }
-
-    @Override
-    protected void onPause()
-    {
-        super.onPause();
-
-        //notificationClient.stop();
-    }
-
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-    }
-
-    private ConnectionManager setupConnectionManager()
-    {
-        ConnectionManager manager = new ConnectionManager();
-
-        manager.setOnStateChangedListener( new ConnectionManager.OnStateChangedListener()
-        {
-            @Override
-            public void onStateChanged( ConnectionManager.State newState )
-            {
-                switch( newState )
-                {
-                    case ALL_CONNECTED:
-                        showConnected();
-                        break;
-
-                    case NOT_ALL_CONNECTED:
-                        showDisconnected();
-                        break;
-                }
-            }
-        } );
-
-        return manager;
     }
 
     private void showConnected()
@@ -194,34 +242,5 @@ public class PagerActivity extends FragmentActivity
                 mainFragment.showDisconnected();
             }
         } );
-    }
-
-    public void connect()
-    {
-        notificationClient.start();
-        commandClient.start();
-    }
-
-    class MyPagerAdapter extends FragmentPagerAdapter
-    {
-        public MyPagerAdapter( FragmentManager fm )
-        {
-            super( fm );
-        }
-
-        @Override
-        public Fragment getItem( int position )
-        {
-            if( position == 0 )
-                return mainFragment;
-
-            return settingsFragment;
-        }
-
-        @Override
-        public int getCount()
-        {
-            return 2;
-        }
     }
 }

@@ -38,6 +38,14 @@ public class ValueSetter
         });
     }
 
+    public void setAllValues( int entityId, int[] values )
+    {
+        for( int id = 0; id < values.length; id++ )
+        {
+            setValue( entityId, id, values[ id ] );
+        }
+    }
+
     private void setValueOfMcp( SingleValue singleValue )
     {
         int valueId = singleValue.getId();

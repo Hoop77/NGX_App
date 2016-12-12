@@ -6,7 +6,8 @@ package com.pbad.ngx_mcp.global;
 
 public enum EntityId
 {
-    MCP( 0 );
+    MCP( 0 ),
+    COUNT( 1 );
 
     private int entityId;
     EntityId( int entityId )
