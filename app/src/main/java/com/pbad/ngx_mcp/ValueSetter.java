@@ -1,11 +1,15 @@
 package com.pbad.ngx_mcp;
 
 import android.app.Activity;
+import android.provider.MediaStore;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.example.phili.ngx_mcp.R;
 import com.pbad.ngx_mcp.global.EntityId;
+import com.pbad.ngx_mcp.global.Global;
 import com.pbad.ngx_mcp.global.SingleValue;
 import com.pbad.ngx_mcp.global.ValueId;
 
@@ -49,18 +53,40 @@ public class ValueSetter
     private void setValueOfMcp( SingleValue singleValue )
     {
         int valueId = singleValue.getId();
+        int iVal = singleValue.getIntValue();
+        boolean bVal = singleValue.getBooleanValue();
 
         if( valueId == ValueId.ANNUN_HDG_SEL.toInt() )
         {
             ToggleButton btn = (ToggleButton) activity.findViewById( R.id.hdg_sel_switch );
-            boolean bVal = singleValue.getBooleanValue();
             btn.setChecked( bVal );
         }
         else if( valueId == ValueId.HEADING.toInt() )
         {
             TextView txt = (TextView) activity.findViewById( R.id.heading_value );
-            int iVal = singleValue.getIntValue();
             txt.setText( String.valueOf( iVal ) );
+        }
+        else if( valueId == ValueId.BANK_LIMIT_SEL.toInt() )
+        {
+            setBank( iVal );
+        }
+    }
+
+    private void setBank( int bankValue )
+    {
+        ToggleButton bank10 = (ToggleButton) activity.findViewById( R.id.bank_angle_10 );
+        ToggleButton bank15 = (ToggleButton) activity.findViewById( R.id.bank_angle_15 );
+        ToggleButton bank20 = (ToggleButton) activity.findViewById( R.id.bank_angle_20 );
+        ToggleButton bank25 = (ToggleButton) activity.findViewById( R.id.bank_angle_25 );
+        ToggleButton bank30 = (ToggleButton) activity.findViewById( R.id.bank_angle_30 );
+        ToggleButton[] bankBtns = new ToggleButton[] { bank10, bank15, bank20, bank25, bank30 };
+
+        for( int i = 0; i < bankBtns.length; i++ )
+        {
+            if( i == bankValue )
+                bankBtns[ i ].setChecked( true );
+            else
+                bankBtns[ i ].setChecked( false );
         }
     }
 }

@@ -164,7 +164,7 @@ public class PagerActivity extends FragmentActivity implements SimConnectCommand
             }
         } );
 
-        int notificationPort = Integer.parseInt( getString( R.string.default_port_1 ) );
+        int notificationPort = Integer.parseInt( getString( R.string.default_port_2 ) );
 
         // client threads
         notificationClient = new NotificationClient(
@@ -195,7 +195,7 @@ public class PagerActivity extends FragmentActivity implements SimConnectCommand
     {
         Connection commandClientConnection = connectionManager.addConnection( "Connection 2" );
 
-        int commandPort = Integer.parseInt( getString( R.string.default_port_2 ) );
+        int commandPort = Integer.parseInt( getString( R.string.default_port_1 ) );
 
         commandClient = new CommandClient(
             serverAddress,

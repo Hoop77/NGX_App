@@ -34,6 +34,7 @@ public abstract class Client implements Runnable
 
     public void start()
     {
+        thread = new Thread( this );
         thread.start();
     }
 
@@ -79,8 +80,6 @@ public abstract class Client implements Runnable
 
     protected synchronized void close()
     {
-        connection.setState( Connection.State.DISCONNECTED );
-
         try
         {
             socket.close();

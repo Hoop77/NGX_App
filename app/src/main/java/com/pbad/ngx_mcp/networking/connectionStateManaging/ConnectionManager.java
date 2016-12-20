@@ -16,6 +16,11 @@ public class ConnectionManager
 
     private ManagerState currentState = new NotAllConnectedState();
 
+    private interface ManagerState
+    {
+        ManagerState connectionStateChanged( Connection connection );
+    }
+
     private class AllConnectedState implements ManagerState
     {
         @Override
@@ -97,10 +102,5 @@ public class ConnectionManager
     public void setOnStateChangedListener( OnStateChangedListener onStateChangedListener )
     {
         this.onStateChangedListener = onStateChangedListener;
-    }
-
-    private interface ManagerState
-    {
-        ManagerState connectionStateChanged( Connection connection );
     }
 }

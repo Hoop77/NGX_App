@@ -42,6 +42,7 @@ public class CommandClient extends Client
         Packet packet = null;
         boolean retry = false;
 
+        running = true;
         while( running )
         {
             // Polling packets from the queue and send them to the server (eventually receive requested data packets).
@@ -58,6 +59,7 @@ public class CommandClient extends Client
                 }
 
                 handlePacketIO( packet );
+                connection.setState( Connection.State.CONNECTED );
                 retry = false;
             }
             catch( InterruptedException e )
@@ -67,6 +69,7 @@ public class CommandClient extends Client
             }
             catch( IOException e )
             {
+                connection.setState( Connection.State.DISCONNECTED );
                 retry = true;
             }
             catch( ProtocolException e )

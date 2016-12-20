@@ -58,6 +58,13 @@ public class NotificationClient extends Client
         close();
     }
 
+    @Override
+    protected void close()
+    {
+        connection.setState( Connection.State.DISCONNECTED );
+        super.close();
+    }
+
     private Packet receive() throws IOException, ProtocolException
     {
         return new PacketReader( socket.getInputStream() ).read();
@@ -74,8 +81,6 @@ public class NotificationClient extends Client
         {
             // get the single value from the packet and push it to the UI
             SingleValueDataPacket singleValueDataPacket = (SingleValueDataPacket) packet;
-            SingleValue singleValue = new SingleValue(
-                    singleValueDataPacket.getValueId(), singleValueDataPacket.getValue() );
             if( onDataReceivedListener != null )
                 onDataReceivedListener.onDataReceived( singleValueDataPacket );
         }
