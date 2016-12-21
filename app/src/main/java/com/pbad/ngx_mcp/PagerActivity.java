@@ -234,6 +234,7 @@ public class PagerActivity extends FragmentActivity implements SimConnectCommand
 
     private void showDisconnected()
     {
+        /*
         runOnUiThread( new Runnable()
         {
             @Override
@@ -242,5 +243,6 @@ public class PagerActivity extends FragmentActivity implements SimConnectCommand
                 mainFragment.showDisconnected();
             }
         } );
+        */
     }
 }

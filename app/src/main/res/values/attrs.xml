@@ -8,5 +8,9 @@
         <attr name="metaButtonBarStyle" format="reference" />
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
+    
+    <declare-styleable name="SwitchState">
+        <attr name="state_switch_on" format="boolean"/>
+    </declare-styleable>
 
 </resources>

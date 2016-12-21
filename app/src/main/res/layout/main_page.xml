@@ -252,12 +252,12 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true">
 
-                    <ToggleButton
+                    <com.pbad.ngx_mcp.SwitchView
                         android:id="@+id/lnav_switch"
                         android:textOn="LNAV"
                         android:textOff="LNAV"
                         style="@style/ToggleBtn"
-                        android:background="@drawable/toggle_btn_bg"
+                        android:background="@drawable/switch_view"
                         android:layout_marginRight="8dp"/>
 
                     <ToggleButton

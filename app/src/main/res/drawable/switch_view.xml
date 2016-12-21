@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.example.phili.ngx_mcp">
+
+    <item app:state_switch_on="false">
+        <shape android:shape="rectangle">
+            <corners
+                android:radius="24dp" />
+            <solid
+                android:color="#70000000"/>
+        </shape>
+    </item>
+    <item app:state_switch_on="true">
+        <shape android:shape="rectangle">
+            <corners
+                android:radius="24dp" />
+            <solid
+                android:color="@color/colorOn"/>
+        </shape>
+    </item>
+</selector>
