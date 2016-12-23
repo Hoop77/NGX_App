@@ -4,7 +4,7 @@ android {
     compileSdkVersion 24
     buildToolsVersion "25.0.0"
     defaultConfig {
-        applicationId "com.example.phili.spielwiese"
+        applicationId "com.pbad.ngx_mcp"
         minSdkVersion 21
         targetSdkVersion 24
         versionCode 1

@@ -12,5 +12,9 @@
     <declare-styleable name="SwitchState">
         <attr name="state_switch_on" format="boolean"/>
     </declare-styleable>
+    
+    <declare-styleable name="CustomTheme">
+        <attr name="switchViewStyle" format="reference"/>
+    </declare-styleable>
 
 </resources>

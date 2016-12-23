@@ -57,6 +57,14 @@ public abstract class Client implements Runnable
         }
     }
 
+    public void restart( InetAddress serverAddress, int port )
+    {
+        stop();
+        this.serverAddress = serverAddress;
+        this.port = port;
+        start();
+    }
+
     public void setOnDataReceivedListener( OnDataReceivedListener onDataReceivedListener )
     {
         this.onDataReceivedListener = onDataReceivedListener;

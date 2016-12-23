@@ -2,25 +2,21 @@ package com.pbad.ngx_mcp;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
-
-import com.example.phili.ngx_mcp.R;
+import android.widget.TextView;
 
 /**
  * Created by philipp on 20.12.16.
  */
 
-public class SwitchView extends View
+public class SwitchView extends TextView
 {
     private static final int[] STATE_SWITCH_ON = { R.attr.state_switch_on };
 
     private boolean on = false;
 
-    // TODO add a SwitchViewSelector!
-
-    public SwitchView( Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes )
+    public SwitchView( Context context, AttributeSet attrs )
     {
-        super( context, attrs, defStyleAttr, defStyleRes );
+        super( context, attrs );
     }
 
     @Override

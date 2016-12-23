@@ -76,9 +76,11 @@ public class PacketReader
         return new SingleValueDataPacket( entityId, valueId, value );
     }
 
-    private Packet readAllValuesDataPacket( int entityId )
+    private Packet readAllValuesDataPacket( int entityId ) throws IOException
     {
         int valueCount = Global.getValueIdCountFromEntityId( entityId );
+        readNextBytes( valueCount * 4 );
+
         int[] values = new int[ valueCount ];
 
         for( int i = 0; i < valueCount; i++ )

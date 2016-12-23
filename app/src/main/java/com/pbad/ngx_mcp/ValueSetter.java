@@ -1,15 +1,10 @@
 package com.pbad.ngx_mcp;
 
 import android.app.Activity;
-import android.provider.MediaStore;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.example.phili.ngx_mcp.R;
 import com.pbad.ngx_mcp.global.EntityId;
-import com.pbad.ngx_mcp.global.Global;
 import com.pbad.ngx_mcp.global.SingleValue;
 import com.pbad.ngx_mcp.global.ValueId;
 
@@ -56,17 +51,17 @@ public class ValueSetter
         int iVal = singleValue.getIntValue();
         boolean bVal = singleValue.getBooleanValue();
 
-        if( valueId == ValueId.ANNUN_HDG_SEL.toInt() )
+        if( valueId == ValueId.MCP_ANNUN_HDG_SEL.toInt() )
         {
-            ToggleButton btn = (ToggleButton) activity.findViewById( R.id.hdg_sel_switch );
-            btn.setChecked( bVal );
+            SwitchView switchView = (SwitchView) activity.findViewById( R.id.hdg_sel_switch );
+            switchView.setOn( bVal );
         }
-        else if( valueId == ValueId.HEADING.toInt() )
+        else if( valueId == ValueId.MCP_HEADING.toInt() )
         {
             TextView txt = (TextView) activity.findViewById( R.id.heading_value );
             txt.setText( String.valueOf( iVal ) );
         }
-        else if( valueId == ValueId.BANK_LIMIT_SEL.toInt() )
+        else if( valueId == ValueId.MCP_BANK_LIMIT_SEL.toInt() )
         {
             setBank( iVal );
         }
