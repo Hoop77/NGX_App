@@ -1,6 +1,7 @@
 package com.pbad.ngx_mcp;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.AttributeSet;
 import android.widget.TextView;
 

@@ -95,7 +95,7 @@ public class PagerActivity extends FragmentActivity implements Commander
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
+    protected void onCreate( Bundle savedInstanceState )
     {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.pager );
@@ -107,18 +107,6 @@ public class PagerActivity extends FragmentActivity implements Commander
         setupClients();
     }
 
-    @Override
-    protected void onPause()
-    {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-    }
-
     private void setupClients()
     {
         setupConnectionManager();
@@ -127,10 +115,12 @@ public class PagerActivity extends FragmentActivity implements Commander
         {
             InetAddress serverAddress = InetAddress.getByName( getString( R.string.default_server_ip ) );
 
-            setupCommandClient( connectionManager, serverAddress );
-            setupNotificationClient( connectionManager, serverAddress );
+            setupCommandClient( serverAddress );
+            setupNotificationClient( serverAddress );
         }
-        catch( UnknownHostException e ) {}
+        catch( UnknownHostException e )
+        {
+        }
     }
 
     private void setupConnectionManager()
@@ -153,16 +143,16 @@ public class PagerActivity extends FragmentActivity implements Commander
         } );
     }
 
-    private void setupCommandClient( ConnectionManager connectionManager, InetAddress serverAddress )
+    private void setupCommandClient( InetAddress serverAddress )
     {
         Connection commandClientConnection = connectionManager.addConnection( "Connection 1" );
 
         int commandPort = Integer.parseInt( getString( R.string.default_command_port ) );
 
         commandClient = new CommandClient(
-            serverAddress,
-            commandPort,
-            commandClientConnection
+                serverAddress,
+                commandPort,
+                commandClientConnection
         );
 
         commandClient.setOnDataReceivedListener( new OnDataReceivedListener()
@@ -192,7 +182,7 @@ public class PagerActivity extends FragmentActivity implements Commander
         } );
     }
 
-    private void setupNotificationClient( ConnectionManager connectionManager, InetAddress serverAddress )
+    private void setupNotificationClient( InetAddress serverAddress )
     {
         Connection notificationClientConnection = connectionManager.addConnection( "Connection 2" );
         notificationClientConnection.setOnConnectionStateChangedListener( new Connection.OnStateChangedListener()

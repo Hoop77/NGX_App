@@ -3,6 +3,7 @@ package com.pbad.ngx_mcp;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,8 @@ import com.pbad.ngx_mcp.global.ValueId;
 public class MCPFragment extends Fragment implements Receiver
 {
     public static final String BLANK = "-";
+    // This value seems to be send when the vertical speed turns off (is becoming "blank").
+    public static final float VS_BLANK_VALUE = -16960;
 
     private View view;
     private Commander commander;
@@ -38,17 +41,20 @@ public class MCPFragment extends Fragment implements Receiver
             btnCrsLPlus, btnCrsLMinus,
             btnCrsRPlus, btnCrsRMinus;
     private Button
-            btnAltInv, btnSpdInv, btnDisengangeBar;
+            btnAltInv, btnSpdInv;
     private SwitchView
             svLnav, svHdgSel, svVorLoc,
             svVnav, svAltHld, svVs, svLvlChg,
             svAtArm, svN1, svSpeed,
             svApp,
-            svCmdA, svCmdB, svCwsA, svCwsB,
-            svFdL, svFdR;
+            svCmdA, svCmdB, svCwsA, svCwsB, svDisengangeBar,
+            svFdL, svFdR,
+            svBank10, svBank15, svBank20, svBank25, svBank30;
     private SwitchViewGroup bankSelector;
 
     private boolean iasBlank, vsBlank;
+    private float ias;
+    private int vs;
 
     @Override
     public View onCreateView( LayoutInflater inflater,
@@ -157,9 +163,6 @@ public class MCPFragment extends Fragment implements Receiver
         // spd_intv button
         btnSpdInv = (Button) view.findViewById( R.id.spd_intv_switch );
         setupPushButton( btnSpdInv, EntityId.MCP, EventId.MCP_SPD_INTV_SWITCH, EventParameter.MOUSE_LEFT_CLICK );
-        // disengage bar
-        btnDisengangeBar = (Button) view.findViewById( R.id.disengage_bar );
-        setupPushButton( btnDisengangeBar, EntityId.MCP, EventId.MCP_DISENGAGE_BAR, EventParameter.MOUSE_LEFT_CLICK );
 
         // svLnav switch
         svLnav = (SwitchView) view.findViewById( R.id.lnav_switch );
@@ -206,25 +209,27 @@ public class MCPFragment extends Fragment implements Receiver
         // cws_b switch
         svCwsB = (SwitchView) view.findViewById( R.id.cws_b_switch );
         setupSwitchView( svCwsB, EntityId.MCP, EventId.MCP_CWS_B_SWITCH, EventParameter.MOUSE_LEFT_CLICK );
-        // fd_l switch
+        // disengage bar
+        svDisengangeBar = (SwitchView) view.findViewById( R.id.disengage_bar );
+        setupSwitchView( svDisengangeBar, EntityId.MCP, EventId.MCP_DISENGAGE_BAR, EventParameter.MOUSE_LEFT_CLICK );
+        // flight directors
         svFdL = (SwitchView) view.findViewById( R.id.fd_switch_l );
         setupSwitchView( svFdL, EntityId.MCP, EventId.MCP_FD_SWITCH_L, EventParameter.MOUSE_LEFT_CLICK );
-        // fd_r switch
         svFdR = (SwitchView) view.findViewById( R.id.fd_switch_r );
         setupSwitchView( svFdR, EntityId.MCP, EventId.MCP_FD_SWITCH_R, EventParameter.MOUSE_LEFT_CLICK );
 
         // bank selector
+        svBank10 = (SwitchView) view.findViewById( R.id.bank_angle_10 );
+        svBank15 = (SwitchView) view.findViewById( R.id.bank_angle_15 );
+        svBank20 = (SwitchView) view.findViewById( R.id.bank_angle_20 );
+        svBank25 = (SwitchView) view.findViewById( R.id.bank_angle_25 );
+        svBank30 = (SwitchView) view.findViewById( R.id.bank_angle_30 );
         setupBankSelector();
     }
 
     private void setupBankSelector()
     {
-        SwitchView bank10 = (SwitchView) view.findViewById( R.id.bank_angle_10 );
-        SwitchView bank15 = (SwitchView) view.findViewById( R.id.bank_angle_15 );
-        SwitchView bank20 = (SwitchView) view.findViewById( R.id.bank_angle_20 );
-        SwitchView bank25 = (SwitchView) view.findViewById( R.id.bank_angle_25 );
-        SwitchView bank30 = (SwitchView) view.findViewById( R.id.bank_angle_30 );
-        SwitchView[] bankViews = new SwitchView[] { bank10, bank15, bank20, bank25, bank30 };
+        SwitchView[] bankViews = new SwitchView[]{ svBank10, svBank15, svBank20, svBank25, svBank30 };
         bankSelector = new SwitchViewGroup( bankViews, 4 );
         bankSelector.setOnSwitchViewClickedListener( new OnSwitchViewClickedListener()
         {
@@ -241,8 +246,7 @@ public class MCPFragment extends Fragment implements Receiver
                                 EntityId.MCP.toInt(),
                                 EventId.MCP_BANK_ANGLE_SELECTOR.toInt(),
                                 EventParameter.MOUSE_LEFT_CLICK.toInt() );
-                    }
-                    else if( diff > 0 )
+                    } else if( diff > 0 )
                     {
                         commander.sendEvent(
                                 EntityId.MCP.toInt(),
@@ -311,41 +315,35 @@ public class MCPFragment extends Fragment implements Receiver
         if( valueId == ValueId.MCP_VERT_SPEED_BLANK.toInt() )
         {
             vsBlank = bVal;
-            if( vsBlank )
-                txtVs.setText( BLANK );
+            setVs( vs );
         }
         else if( valueId == ValueId.MCP_IAS_BLANK.toInt() )
         {
             iasBlank = bVal;
-            if( iasBlank )
-                txtIas.setText( BLANK );
+            setIas( ias );
         }
-
+        else if( valueId == ValueId.MCP_FD_SW_L.toInt() )
+        {
+            if( bVal )
+                svFdL.setText( getString( R.string.fd_switch_l_on ) );
+            else
+                svFdL.setText( getString( R.string.fd_switch_l_off ) );
+        }
+        else if( valueId == ValueId.MCP_FD_SW_R.toInt() )
+        {
+            if( bVal )
+                svFdR.setText( getString( R.string.fd_switch_r_on ) );
+            else
+                svFdR.setText( getString( R.string.fd_switch_r_off ) );
+        }
         else if( valueId == ValueId.MCP_HEADING.toInt() )
             txtHdg.setText( String.valueOf( iVal ) );
         else if( valueId == ValueId.MCP_ALTITUDE.toInt() )
             txtAlt.setText( String.valueOf( iVal ) );
         else if( valueId == ValueId.MCP_VERT_SPEED.toInt() )
-        {
-            if( vsBlank )
-                txtVs.setText( BLANK );
-            else
-                txtVs.setText( String.valueOf( iVal ) );
-        }
+            setVs( iVal );
         else if( valueId == ValueId.MCP_IAS_MACH.toInt() )
-        {
-            if( iasBlank )
-                txtIas.setText( BLANK );
-            else
-            {
-                // knots
-                if( fVal >= 100.0f )
-                    txtIas.setText( String.valueOf( (int) fVal ) );
-                // mach
-                else
-                    txtIas.setText( String.valueOf( fVal ) );
-            }
-        }
+            setIas( fVal );
         else if( valueId == ValueId.MCP_COURSE_L.toInt() )
             txtCrsL.setText( String.valueOf( iVal ) );
         else if( valueId == ValueId.MCP_COURSE_R.toInt() )
@@ -381,6 +379,8 @@ public class MCPFragment extends Fragment implements Receiver
             svCwsA.setOn( bVal );
         else if( valueId == ValueId.MCP_ANNUN_CWS_B.toInt() )
             svCwsB.setOn( bVal );
+        else if( valueId == ValueId.MCP_DISENGAGE_BAR.toInt() )
+            svDisengangeBar.setOn( bVal );
         else if( valueId == ValueId.MCP_ANNUN_FD_L.toInt() )
             svFdL.setOn( bVal );
         else if( valueId == ValueId.MCP_ANNUN_FD_R.toInt() )
@@ -388,5 +388,32 @@ public class MCPFragment extends Fragment implements Receiver
 
         else if( valueId == ValueId.MCP_BANK_LIMIT_SEL.toInt() )
             bankSelector.select( iVal );
+    }
+
+    private void setIas( float ias )
+    {
+        this.ias = ias;
+
+        if( iasBlank )
+            txtIas.setText( BLANK );
+        else
+        {
+            // knots
+            if( ias >= 100.0f )
+                txtIas.setText( String.valueOf( (int) ias ) );
+                // mach
+            else
+                txtIas.setText( String.valueOf( ias ) );
+        }
+    }
+
+    private void setVs( int vs )
+    {
+        this.vs = vs;
+
+        if( vsBlank || vs == VS_BLANK_VALUE )
+            txtVs.setText( BLANK );
+        else
+            txtVs.setText( String.valueOf( vs ) );
     }
 }

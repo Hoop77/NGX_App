@@ -505,12 +505,11 @@
 
                 </LinearLayout>
 
-                <Button
+                <com.pbad.ngx_mcp.SwitchView
                     android:id="@+id/disengage_bar"
                     android:layout_below="@id/apengage_row2"
                     android:text="DISENGAGE"
-                    style="@style/PushBtn.Big"
-                    android:background="@drawable/push_btn"
+                    style="@style/SwitchView.Big"
                     android:layout_marginTop="12dp"
                     android:layout_centerHorizontal="true"/>
 

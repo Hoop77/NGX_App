@@ -3,4 +3,8 @@
     <string name="default_server_ip">192.168.178.29</string>
     <string name="default_command_port">7654</string>
     <string name="default_notification_port">7653</string>
+    <string name="fd_switch_l_off">FD L (OFF)</string>
+    <string name="fd_switch_l_on">FD L (ON)</string>
+    <string name="fd_switch_r_off">FD R (OFF)</string>
+    <string name="fd_switch_r_on">FD R (ON)</string>
 </resources>
