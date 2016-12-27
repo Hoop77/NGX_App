@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CommandClient extends Client
 {
-    private BlockingQueue<Packet> packetQueue = new LinkedBlockingQueue<>( 100 );
+    private BlockingQueue<Packet> packetQueue = new LinkedBlockingQueue<>( 10000 );
 
     public CommandClient( InetAddress serverAddress, int port, Connection connection )
     {

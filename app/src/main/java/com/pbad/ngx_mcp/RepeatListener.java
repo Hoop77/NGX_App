@@ -27,8 +27,6 @@ public class RepeatListener implements OnTouchListener
 
     private int currentInterval;
 
-    private volatile boolean resetInterval = false;
-
     private final OnClickListener clickListener;
 
     private Runnable handlerRunnable = new Runnable()
@@ -82,7 +80,6 @@ public class RepeatListener implements OnTouchListener
             case MotionEvent.ACTION_CANCEL:
                 handler.removeCallbacks( handlerRunnable );
                 currentInterval = startInterval;
-                resetInterval = true;
                 downView.setPressed( false );
                 downView = null;
                 return true;

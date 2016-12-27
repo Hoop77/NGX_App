@@ -82,6 +82,10 @@ public abstract class Client implements Runnable
             throw new IOException();
 
         socket = new Socket();
+        // Turn off nagle's algorithm - we're only transferring very small packets.
+        // Since this will only affect the local network,
+        // we don't need to panic about the internet being collapsed by this.
+        socket.setTcpNoDelay( true );
         socket.connect( new InetSocketAddress( serverAddress, port ), 5000 );
         connection.setState( Connection.State.CONNECTED );
     }

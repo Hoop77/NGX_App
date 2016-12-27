@@ -265,7 +265,7 @@ public class MCPFragment extends Fragment implements Receiver
                               final EventId eventId,
                               final EventParameter eventParameter )
     {
-        btn.setOnTouchListener( new RepeatListener( 400, 100, 20, 10, new View.OnClickListener()
+        btn.setOnTouchListener( new RepeatListener( 400, 150, 50, 5, new View.OnClickListener()
         {
             @Override
             public void onClick( View v )
